@@ -1,0 +1,40 @@
+# Week 1: --dummy writes three fake chunks. Remove the flag on Thursday (and in reindex-cronjob.yaml).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: indexer
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels: { app: indexer }
+    spec:
+      restartPolicy: OnFailure
+      enableServiceLinks: false
+      serviceAccountName: rahbar-indexer
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: indexer
+          image: rahbar-indexer:dev
+          imagePullPolicy: IfNotPresent
+          args: ["python", "-m", "pipeline.run", "--dummy"]
+          envFrom:
+            - configMapRef: { name: rahbar-config }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          # Placeholder numbers: replace them with kubectl top pods evidence (section 4.5).
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { cpu: "1", memory: 1Gi }
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }
+      volumes:
+        - name: tmp
+          emptyDir: {}

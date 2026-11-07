@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+# CD sets the real tag with: kustomize edit set image ...=...:<commit sha>
+images:
+  - name: rahbar-api
+    newName: dockerhubuser/rahbar-api
+    newTag: REPLACE_SHA
+  - name: rahbar-indexer
+    newName: dockerhubuser/rahbar-indexer
+    newTag: REPLACE_SHA
+  - name: rahbar-ui
+    newName: dockerhubuser/rahbar-ui
+    newTag: REPLACE_SHA
