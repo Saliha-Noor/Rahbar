@@ -8,7 +8,7 @@ RUN apt-get update \
 RUN useradd --uid 10001 --no-create-home --shell /usr/sbin/nologin app
 WORKDIR /app
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip \
+RUN pip install --no-cache-dir --upgrade pip "setuptools>=78.1.1" \
  && pip install --no-cache-dir -r requirements.txt
 COPY pipeline ./pipeline
 USER 10001
