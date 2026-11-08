@@ -1,9 +1,15 @@
-"""Ollama provider: ollama-host or ollama-incluster (section 3.5). Yours to build."""
+"""Ollama provider: ollama-host or ollama-incluster (section 3.5)."""
 
 from __future__ import annotations
 
+import httpx
+from pydantic import ValidationError
+
 from ...config import Settings
+from ...metrics_rag import TOKENS_IN, TOKENS_OUT
 from ...schemas import Answer, Passage
+from ...services.prompt import build_messages
+from .errors import GenerationFailed
 
 
 class OllamaProvider:
@@ -13,8 +19,23 @@ class OllamaProvider:
         self.settings = settings   # ollama_url, llm_model, temperature
 
     def generate(self, question: str, passages: list[Passage]) -> Answer:
-        # STARTER-TODO(3.4): build the augmented prompt (instructions, numbered evidence,
-        # then the question), call POST {ollama_url}/api/chat with the Answer schema as
-        # the output format, and turn the reply into an Answer. Section 3.4 lists what
-        # a production call needs around it; read it before you write this.
-        raise NotImplementedError("OllamaProvider.generate: see STARTER-TODO(3.4)")
+        s = self.settings
+        payload = {
+            "model": s.llm_model,
+            "messages": build_messages(question, passages),
+            "stream": False,
+            "format": Answer.model_json_schema(),   # strongest enforcement Ollama offers
+            "options": {"temperature": s.temperature},
+        }
+        last = "unknown error"
+        for _ in range(2):  # one try, then one retry (section 3.4)
+            try:
+                r = httpx.post(f"{s.ollama_url}/api/chat", json=payload, timeout=180)
+                r.raise_for_status()
+                body = r.json()
+                TOKENS_IN.inc(body.get("prompt_eval_count", 0))
+                TOKENS_OUT.inc(body.get("eval_count", 0))
+                return Answer.model_validate_json(body["message"]["content"])
+            except (httpx.HTTPError, ValidationError, ValueError, KeyError) as exc:
+                last = str(exc)
+        raise GenerationFailed(last)

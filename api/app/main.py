@@ -32,8 +32,22 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.settings = settings
     app.state.retriever = get_retriever(settings)
     app.state.provider = get_provider(settings)
-    # STARTER-TODO(4.4): compare the collection's embedding-model metadata with
-    # settings.embed_model here, and make /readyz fail on a mismatch.
+    app.state.cache = None
+    if settings.retriever == "chroma":
+        from .services.cache import SemanticCache
+
+        app.state.cache = SemanticCache(settings)
+        # Embedding pin (section 4.4): log a mismatch at startup. /readyz enforces it on
+        # every probe, so a mismatched pod never joins the Service.
+        try:
+            client = app.state.retriever.client  # type: ignore[attr-defined]
+            meta = client.get_collection(settings.collection).metadata or {}
+            if meta.get("embed_model") != settings.embed_model:
+                log.error("embedding pin mismatch",
+                          extra={"index_embed_model": meta.get("embed_model"),
+                                 "api_embed_model": settings.embed_model})
+        except Exception as exc:  # no index yet: /readyz will say so
+            log.warning("collection not readable at startup", extra={"error": str(exc)})
     # This process only reads the index. The indexer Job writes it.
     log.info(
         "api started",
