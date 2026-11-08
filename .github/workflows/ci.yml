@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [dev]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r api/requirements-dev.txt -r indexer/requirements-dev.txt
+      - run: ruff check api indexer eval corpus
+      - run: cd api && mypy app
+      - run: cd indexer && mypy pipeline
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r api/requirements-dev.txt -r indexer/requirements-dev.txt pytest-cov
+      - run: cd api && pytest --cov=app --cov-fail-under=60 -q
+      - run: cd indexer && pytest -q
+
+  manifests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install kubeconform and kustomize
+        run: |
+          curl -sL https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz | tar xz
+          sudo install kubeconform /usr/local/bin/
+          if ! command -v kustomize > /dev/null; then
+            curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+            sudo mv kustomize /usr/local/bin/
+          fi
+      - run: kustomize build k8s/overlays/prod | kubeconform -strict -summary
+      - run: kustomize build k8s/overlays/dev | kubeconform -strict -summary
+      - run: kustomize build k8s/overlays/smoke | kubeconform -strict -summary
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: [api, indexer, ui]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build (no push on a pull request)
+        run: docker build -t rahbar-${{ matrix.image }}:ci ${{ matrix.image }}
+
+  scan:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: [api, indexer, ui]
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t rahbar-${{ matrix.image }}:ci ${{ matrix.image }}
+      - uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: rahbar-${{ matrix.image }}:ci
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
