@@ -119,12 +119,6 @@ jobs:
           kubectl apply -f /tmp/ci.yaml
           kubectl wait --for=condition=complete job/indexer -n rahbar --timeout=300s
           kubectl rollout status deploy/api -n rahbar --timeout=300s
-      - name: Eval gate (section 5.4)
-        run: |
-          python eval/run_eval.py --api http://localhost --host rahbar.local \
-            --golden eval/fixtures/golden.fixture.yaml \
-            --baseline eval/fixtures/baseline.fixture.json \
-            --out /tmp/fixture-results.json
       - name: Probe scores (diagnostic)
         run: |
           python - <<'EOF'
@@ -138,6 +132,12 @@ jobs:
                     'answered=%s' % r['answered_from_context'],
                     top and (top['chunk_id'], round(top['score'], 3)))
           EOF
+      - name: Eval gate (section 5.4)
+        run: |
+          python eval/run_eval.py --api http://localhost --host rahbar.local \
+            --golden eval/fixtures/golden.fixture.yaml \
+            --baseline eval/fixtures/baseline.fixture.json \
+            --out /tmp/fixture-results.json
       - uses: actions/upload-artifact@v4
         if: always()
         with: { name: fixture-results, path: /tmp/fixture-results.json }
