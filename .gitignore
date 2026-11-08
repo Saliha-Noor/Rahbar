@@ -26,3 +26,5 @@ venv/
 
 # Corpus copied into the indexer image build context (see STARTER.md / README)
 indexer/corpus/
+.coverage
+htmlcov/

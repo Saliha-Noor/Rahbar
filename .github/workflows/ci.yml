@@ -71,3 +71,65 @@ jobs:
           severity: HIGH,CRITICAL
           ignore-unfixed: true
           exit-code: "1"
+  e2e-eval:
+    runs-on: ubuntu-latest
+    needs: [test, manifests]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install httpx==0.28.1 pyyaml==6.0.2
+      - name: Build images
+        run: for i in api indexer ui; do docker build -t rahbar-$i:ci $i; done
+      - uses: helm/kind-action@v1
+        with:
+          cluster_name: rahbar
+          config: .github/kind-config.yaml
+      - name: Load images into kind
+        run: for i in api indexer ui; do kind load docker-image rahbar-$i:ci --name rahbar; done
+      - name: Ingress controller
+        run: |
+          kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml
+          kubectl wait --namespace ingress-nginx --for=condition=ready pod \
+            --selector=app.kubernetes.io/component=controller --timeout=180s
+      - name: Ollama (embeddings only)
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          sudo systemctl stop ollama || true
+          OLLAMA_HOST=0.0.0.0:11434 nohup ollama serve > /tmp/ollama.log 2>&1 &
+          for i in $(seq 1 30); do curl -fs http://127.0.0.1:11434/api/tags >/dev/null && break; sleep 2; done
+          ollama pull nomic-embed-text
+      - name: Apply manifests
+        run: |
+          GW=$(docker network inspect kind -f '{{range .IPAM.Config}}{{.Gateway}} {{end}}' | tr ' ' '\n' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
+          kubectl kustomize k8s/overlays/ci \
+            | sed "s/192\.168\.49\.1/$GW/g; s/host\.minikube\.internal/$GW/g" > /tmp/ci.yaml
+          for i in 1 2 3 4 5; do kubectl apply -f /tmp/ci.yaml && break; sleep 5; done
+          kubectl rollout status statefulset/chroma -n rahbar --timeout=180s
+          kubectl rollout status deploy/redis -n rahbar --timeout=120s
+      - name: Load the fixture corpus, then run the indexer Job
+        run: |
+          kubectl apply -f k8s/tools/corpus-loader.yaml
+          kubectl wait --for=condition=Ready pod/corpus-loader -n rahbar --timeout=120s
+          tar cf - -C eval/fixtures academic-rules-2023.md academic-rules-2026.md fees-2026.md \
+            | kubectl exec -i corpus-loader -n rahbar -- tar xf - -C /corpus
+          kubectl delete pod corpus-loader -n rahbar
+          kubectl delete job indexer -n rahbar --ignore-not-found
+          kubectl apply -f /tmp/ci.yaml
+          kubectl wait --for=condition=complete job/indexer -n rahbar --timeout=300s
+          kubectl rollout status deploy/api -n rahbar --timeout=300s
+      - name: Eval gate (section 5.4)
+        run: |
+          python eval/run_eval.py --api http://localhost --host rahbar.local \
+            --golden eval/fixtures/golden.fixture.yaml \
+            --baseline eval/fixtures/baseline.fixture.json \
+            --out /tmp/fixture-results.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: fixture-results, path: /tmp/fixture-results.json }
+      - name: Debug on failure
+        if: failure()
+        run: |
+          kubectl get pods -n rahbar
+          kubectl logs job/indexer -n rahbar --tail=50 || true
+          kubectl logs deploy/api -n rahbar --tail=50 || true
