@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import logging
+
 from fastapi import APIRouter, Request, Response
 
 router = APIRouter()
+log = logging.getLogger("rahbar.ready")
 
 
 @router.get("/healthz")
@@ -15,8 +18,32 @@ def healthz() -> dict[str, str]:
 
 @router.get("/readyz")
 def readyz(request: Request, response: Response) -> dict[str, object]:
-    # STARTER-TODO(4.3, 4.4): return 503, naming the failed dependency, unless Chroma is
-    # reachable, the collection exists and is non-empty, Redis is reachable, and the
-    # collection's embedding model matches EMBED_MODEL. Until then this always says yes,
-    # which is exactly the lie section 4.2 warns about.
-    return {"status": "ready", "checks": {}}
+    """Ready only if Chroma answers, the collection is non-empty, the embedding pin
+    matches, and Redis answers. Otherwise 503 naming what failed (sections 4.3, 4.4)."""
+    s = request.app.state.settings
+    if s.retriever != "chroma":
+        return {"status": "ready", "checks": {"mode": "stub"}}
+
+    def fail(dep: str, why: str) -> dict[str, object]:
+        response.status_code = 503
+        log.error("not ready", extra={"failed": dep, "reason": why})
+        return {"status": "not ready", "failed": dep, "reason": why}
+
+    try:
+        col = request.app.state.retriever.client.get_collection(s.collection)
+        count = col.count()
+    except Exception as exc:
+        return fail("chroma", f"collection unavailable: {exc}")
+    if count == 0:
+        return fail("chroma", "collection is empty")
+    pinned = (col.metadata or {}).get("embed_model")
+    if pinned != s.embed_model:
+        return fail(
+            "embedding-pin",
+            f"index was built with {pinned!r} but this API has EMBED_MODEL={s.embed_model!r}",
+        )
+    try:
+        request.app.state.cache.ping()
+    except Exception as exc:
+        return fail("redis", str(exc))
+    return {"status": "ready", "checks": {"chroma": count, "embed_model": pinned, "redis": "ok"}}
