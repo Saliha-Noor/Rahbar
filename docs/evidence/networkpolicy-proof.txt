@@ -1,0 +1,14 @@
+# ui -> chroma: must be BLOCKED
+wget: download timed out
+command terminated with exit code 1
+# api -> chroma: must be ALLOWED
+b'{"nanosecond heartbeat":1794075035486964987}'
+NAME               POD-SELECTOR   AGE
+allow-dns          <none>         4m5s
+api-egress         app=api        4m5s
+api-ingress        app=api        4m5s
+chroma-ingress     app=chroma     4m5s
+default-deny-all   <none>         4m5s
+indexer-egress     app=indexer    4m5s
+redis-ingress      app=redis      4m5s
+ui-from-ingress    app=ui         4m5s
