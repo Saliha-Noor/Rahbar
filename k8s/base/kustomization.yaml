@@ -13,5 +13,6 @@ resources:
   - ingress.yaml
   - indexer-job.yaml
   - reindex-cronjob.yaml
+  - corpus-pvc.yaml
   - networkpolicy.yaml
 # NOT listed here, on purpose: the Secret. Create it with `make secret`.

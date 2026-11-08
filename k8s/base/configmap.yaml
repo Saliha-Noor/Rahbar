@@ -4,9 +4,9 @@ metadata:
   name: rahbar-config
 data:
   # Week-1 values: stubs plus the dummy index. Change on Thursday.
-  RETRIEVER: "stub"
-  LLM_PROVIDER: "stub"
-  EMBED_MODEL: "dummy-768"          # the pin; indexer and api read this same key
+  RETRIEVER: "chroma"
+  LLM_PROVIDER: "ollama-host"
+  EMBED_MODEL: "nomic-embed-text"          # the pin; indexer and api read this same key
   CHROMA_HOST: "chroma"
   CHROMA_PORT: "8000"
   CHROMA_COLLECTION: "rahbar"
@@ -23,3 +23,6 @@ data:
   CACHE_THRESHOLD: "0.92"
   REDIS_HOST: "redis"
   REDIS_PORT: "6379"
+  CORPUS_DIR: "/corpus"
+  CACHE_TTL: "86400"
+
