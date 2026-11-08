@@ -24,5 +24,5 @@ data:
   REDIS_HOST: "redis"
   REDIS_PORT: "6379"
   CORPUS_DIR: "/corpus"
-  CACHE_TTL: "<her default>"
+  CACHE_TTL: "86400"
 

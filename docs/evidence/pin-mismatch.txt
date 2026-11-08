@@ -1,0 +1,14 @@
+NAME                     READY   STATUS      RESTARTS      AGE
+api-579b4cdd5-dgc74      1/1     Running     1 (34m ago)   17h
+api-579b4cdd5-fmhwk      1/1     Running     1 (34m ago)   17h
+api-579b4cdd5-j2sts      1/1     Running     1 (34m ago)   17h
+api-c6f5b9955-6rczv      0/1     Running     0             96s
+chroma-0                 1/1     Running     1 (34m ago)   17h
+redis-6b745dd79c-qh28z   1/1     Running     1 (34m ago)   17h
+reindex-29901780-dqt8v   0/1     Completed   0             33m
+ui-64c96f99fd-kk7kn      1/1     Running     1 (34m ago)   17h
+--- pod/api-c6f5b9955-6rczv
+{"ts": "2026-11-08T11:14:13Z", "level": "ERROR", "logger": "rahbar.ready", "msg": "not ready", "request_id": "4089a7b4e0004e7c8f47ecf08ce048f7", "failed": "embedding-pin", "reason": "index was built with 'dummy-768' but this API has EMBED_MODEL='nomic-embed-text'"}
+{"ts": "2026-11-08T11:14:23Z", "level": "ERROR", "logger": "rahbar.ready", "msg": "not ready", "request_id": "034a1b8ef0aa47dbaac76bd1188d4225", "failed": "embedding-pin", "reason": "index was built with 'dummy-768' but this API has EMBED_MODEL='nomic-embed-text'"}
+{"ts": "2026-11-08T11:14:33Z", "level": "ERROR", "logger": "rahbar.ready", "msg": "not ready", "request_id": "ccd4e1c86c1d4e4c98ba5879c0b1c453", "failed": "embedding-pin", "reason": "index was built with 'dummy-768' but this API has EMBED_MODEL='nomic-embed-text'"}
+  Warning  Unhealthy  0s (x9 over 80s)     kubelet            spec.containers{api}: Readiness probe failed: HTTP probe failed with statuscode: 503
