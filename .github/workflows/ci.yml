@@ -119,19 +119,6 @@ jobs:
           kubectl apply -f /tmp/ci.yaml
           kubectl wait --for=condition=complete job/indexer -n rahbar --timeout=300s
           kubectl rollout status deploy/api -n rahbar --timeout=300s
-      - name: Probe scores (diagnostic)
-        run: |
-          python - <<'EOF'
-          import httpx, yaml
-          qs = yaml.safe_load(open('eval/fixtures/golden.fixture.yaml'))['questions']
-          for q in qs:
-              r = httpx.post('http://localhost/api/ask', headers={'Host': 'rahbar.local'},
-                             json={'question': q['question']}, timeout=60).json()
-              top = r['retrieved'][0] if r['retrieved'] else None
-              print(q['id'], 'must_abstain=%s' % q.get('must_abstain', False),
-                    'answered=%s' % r['answered_from_context'],
-                    top and (top['chunk_id'], round(top['score'], 3)))
-          EOF
       - name: Eval gate (section 5.4)
         run: |
           python eval/run_eval.py --api http://localhost --host rahbar.local \
