@@ -1,4 +1,3 @@
-# Week 1: --dummy writes three fake chunks. Remove the flag on Thursday (and in reindex-cronjob.yaml).
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -29,7 +28,6 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities: { drop: ["ALL"] }
-          # Placeholder numbers: replace them with kubectl top pods evidence (section 4.5).
           resources:
             requests: { cpu: 100m, memory: 256Mi }
             limits: { cpu: "1", memory: 1Gi }
