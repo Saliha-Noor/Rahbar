@@ -9,20 +9,8 @@ patches:
   - target: { kind: ConfigMap, name: rahbar-config }
     patch: |-
       - op: replace
-        path: /data/LLM_apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources: [../../base]
-images:
-  - { name: rahbar-api, newTag: ci }
-  - { name: rahbar-indexer, newTag: ci }
-  - { name: rahbar-ui, newTag: ci }
-patches:
-  - target: { kind: ConfigMap, name: rahbar-config }
-    patch: |-
-      - op: replace
         path: /data/LLM_PROVIDER
         value: stub
       - op: replace
         path: /data/RELEVANCE_FLOOR
-        value: "0.55"PROVIDER
-        value: stub
+        value: "0.55"
