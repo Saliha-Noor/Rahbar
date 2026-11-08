@@ -46,6 +46,7 @@ jobs:
       - run: kustomize build k8s/overlays/prod | kubeconform -strict -summary
       - run: kustomize build k8s/overlays/dev | kubeconform -strict -summary
       - run: kustomize build k8s/overlays/smoke | kubeconform -strict -summary
+      - run: kustomize build k8s/overlays/ci | kubeconform -strict -summary
 
   build:
     runs-on: ubuntu-latest
