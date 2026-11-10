@@ -9,6 +9,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip "setuptools>=78.1.1" \
  && pip install --no-cache-dir -r requirements.txt
+RUN rm -f /usr/local/lib/python3.12/site-packages/pip/_vendor/bom.cdx.json
 COPY app ./app
 USER 10001
 EXPOSE 8000
