@@ -1,4 +1,7 @@
 FROM nginxinc/nginx-unprivileged:1.27-alpine
+# The base image ships stale Alpine packages; pull in the patched versions at build time.
+USER root
+RUN apk upgrade --no-cache
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY index.html /usr/share/nginx/html/index.html
 USER 101

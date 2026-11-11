@@ -11,7 +11,7 @@ data:
   CHROMA_COLLECTION: "rahbar"
   TOP_K: "5"
   TEMPERATURE: "0.2"
-  LLM_MODEL: "llama3.2:3b"
+  LLM_MODEL: "llama3.2:1b"
   OLLAMA_URL: "http://host.minikube.internal:11434"
   CHUNK_SIZE: "400"
   CHUNK_OVERLAP: "50"

@@ -32,7 +32,7 @@ spec:
             - { name: ANONYMIZED_TELEMETRY, value: "FALSE" }
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
             capabilities: { drop: ["ALL"] }
           resources:
             requests: { cpu: 100m, memory: 256Mi }
