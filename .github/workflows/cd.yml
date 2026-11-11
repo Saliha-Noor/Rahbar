@@ -48,6 +48,12 @@ jobs:
           kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml
           kubectl wait --namespace ingress-nginx --for=condition=ready pod \
             --selector=app.kubernetes.io/component=controller --timeout=180s
+          # The admission webhook can lag behind the controller pod being Ready.
+          for i in $(seq 1 30); do
+            kubectl get endpoints ingress-nginx-controller-admission -n ingress-nginx \
+              -o jsonpath='{.subsets[*].addresses[*].ip}' | grep -q . && break
+            sleep 2
+          done
       - name: Deploy the SHA-tagged images
         run: |
           cd k8s/overlays/smoke
@@ -55,10 +61,18 @@ jobs:
             kustomize edit set image rahbar-$i=${{ secrets.DOCKERHUB_USERNAME }}/rahbar-$i:${{ github.sha }}
           done
           cd ../../..
-          kubectl apply -k k8s/overlays/smoke
+          # apply is idempotent, so retrying covers a webhook that is not serving yet
+          apply() {
+            for i in 1 2 3 4 5 6; do
+              kubectl apply -k k8s/overlays/smoke && return 0
+              echo "apply failed, retrying in 10s"; sleep 10
+            done
+            return 1
+          }
+          apply
           kubectl rollout status statefulset/chroma -n rahbar --timeout=180s
           kubectl delete job indexer -n rahbar --ignore-not-found
-          kubectl apply -k k8s/overlays/smoke
+          apply
       - name: Wait for the rollout
         run: |
           kubectl wait --for=condition=complete job/indexer -n rahbar --timeout=300s
