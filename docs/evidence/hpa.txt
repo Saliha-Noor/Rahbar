@@ -1,0 +1,5 @@
+$ kubectl get hpa -n rahbar
+NAME   REFERENCE        TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
+api    Deployment/api   cpu: 7%/70%   3      8         3          3d22h
+
+Captured from the command output supplied for this repository review. This is a current snapshot: 3 replicas, 7% CPU utilisation against the 70% target. It does not establish why the separate top-pods snapshot contained eight API pods.
