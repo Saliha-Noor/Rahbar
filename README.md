@@ -142,7 +142,7 @@ curl -s http://rahbar.local/api/ask \
 - `docs/evidence/hpa.txt` records the supplied HPA snapshot (`cpu: 7%/70%`, min 3, max 8, current replicas 3).
 - Capture a real browser screenshot of the running chat UI with a cited answer and save it as `docs/evidence/ui-screenshot.png`. Do not use a mock screenshot: it must show the live service and citations. The README image reference below becomes active when that file is added.
 
-![RAHBAR chat UI evidence](docs/evidence/ui-screenshot.png)
+<img width="956" height="448" alt="Screenshot 2026-11-11 213722" src="https://github.com/user-attachments/assets/b0d66736-b5e5-46e5-b7f1-76db766a7ed2" />
 
 For operational proofs still to capture, see `docs/FINAL-EVIDENCE-CHECKLIST.md`. Do not describe a check as passed until its command output or screenshot is committed.
 
