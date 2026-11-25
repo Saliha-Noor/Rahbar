@@ -119,6 +119,12 @@ kubectl create secret generic rahbar-secret -n rahbar --from-literal=LLM_API_KEY
 
 The committed `k8s/base/rahbar-secret.placeholder.yaml` is documentation only and is intentionally not included in `kustomization.yaml`.
 
+## RAGOps layer (Assignment 3)
+
+Verification, incremental update, three-level evaluation, release gate, traces, drift and a controlled release,
+all on Kubernetes. Commands for every part (A to F): [docs/RAGOPS.md](docs/RAGOPS.md). Manifests: [k8s/README.md](k8s/README.md).
+Report skeleton: [docs/RAGOPS-REPORT.md](docs/RAGOPS-REPORT.md).
+
 ## API endpoints
 
 | Method | Path | Purpose |

@@ -26,6 +26,8 @@ class Passage(BaseModel):
     section: str
     page: int | None = None
     score: float = Field(description="Similarity, higher is closer (1 - cosine distance).")
+    doc_id: str = ""          # RAGOps: which document the chunk belongs to (for traces)
+    doc_version: str = ""     # RAGOps: its version, as indexed
 
 
 class Citation(BaseModel):

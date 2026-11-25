@@ -1,0 +1,1 @@
+Campus sports notice. The sports complex is open from 8 am to 8 pm. Students may book the badminton courts for one hour at a time. Cricket nets are reserved for the university team on Tuesdays and Thursdays. Equipment can be borrowed from the sports office against the student card.

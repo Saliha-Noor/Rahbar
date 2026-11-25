@@ -1,0 +1,30 @@
+{"kind": "paraphrase", "a": "Students must attend at least 80 percent of lectures to sit the final exam.", "b": "A learner needs eighty percent attendance before being allowed in the final examination."}
+{"kind": "paraphrase", "a": "A late library book is charged a fine for every day it is overdue.", "b": "Returning a book after the due date costs money for each day of delay."}
+{"kind": "paraphrase", "a": "The tuition fee is charged per credit hour.", "b": "Each credit hour has its own tuition charge."}
+{"kind": "paraphrase", "a": "A student with a CGPA below 2.00 is placed on academic warning.", "b": "Falling under a 2.00 cumulative GPA puts the student on warning."}
+{"kind": "paraphrase", "a": "A course may be repeated to improve the grade.", "b": "Students can retake a class to get a better mark."}
+{"kind": "paraphrase", "a": "Withdrawal from a course is allowed until the end of the makeup week.", "b": "You may drop a class up to the last day of the makeup week."}
+{"kind": "paraphrase", "a": "Lost identity cards must be reported within three working days.", "b": "If your student card goes missing, tell the office within three working days."}
+{"kind": "paraphrase", "a": "Transfer credits must have been earned within the last five years.", "b": "Credits from another university count only if they are at most five years old."}
+{"kind": "paraphrase", "a": "Hostel residents must return before the curfew time.", "b": "Students living in the hostel have to be back by closing time."}
+{"kind": "paraphrase", "a": "The student must apply for the internship after completing 60 credit hours.", "b": "Internship applications open once sixty credit hours are finished."}
+{"kind": "paraphrase", "a": "Mobile phones are not allowed in the examination hall.", "b": "Students may not bring cell phones into the exam room."}
+{"kind": "paraphrase", "a": "Need-based aid can cover half of the tuition fee.", "b": "Financial assistance may pay up to fifty percent of tuition."}
+{"kind": "paraphrase", "a": "The freeze of admission is limited to two semesters.", "b": "A student can pause enrolment for no more than two terms."}
+{"kind": "paraphrase", "a": "Students receive an institute email account after registration.", "b": "After enrolling, every student is given a university e-mail address."}
+{"kind": "paraphrase", "a": "Reference books stay inside the library.", "b": "Books on the reference shelf may not leave the building."}
+{"kind": "unrelated", "a": "Students must attend at least 80 percent of lectures.", "b": "The monsoon season brings heavy rain to the northern plains."}
+{"kind": "unrelated", "a": "A late library book is charged a fine.", "b": "Photosynthesis converts sunlight into chemical energy."}
+{"kind": "unrelated", "a": "The tuition fee is charged per credit hour.", "b": "The football match ended in a goalless draw."}
+{"kind": "unrelated", "a": "A CGPA below 2.00 means academic warning.", "b": "Mount Everest is the highest mountain above sea level."}
+{"kind": "unrelated", "a": "A course may be repeated to improve the grade.", "b": "The recipe needs two cups of flour and a pinch of salt."}
+{"kind": "unrelated", "a": "Withdrawal is allowed until the makeup week.", "b": "Quantum computers use qubits instead of classical bits."}
+{"kind": "unrelated", "a": "Lost identity cards must be reported quickly.", "b": "The river delta supports a rich variety of birds."}
+{"kind": "unrelated", "a": "Transfer credits must be recent.", "b": "The orchestra tuned their instruments before the concert."}
+{"kind": "unrelated", "a": "Hostel residents must return before curfew.", "b": "Volcanic eruptions can change the global climate."}
+{"kind": "unrelated", "a": "Internship applications need 60 credit hours.", "b": "Sourdough bread needs a long fermentation."}
+{"kind": "unrelated", "a": "Phones are not allowed in the exam hall.", "b": "The museum opens a new exhibit on ancient Egypt."}
+{"kind": "unrelated", "a": "Need-based aid can cover half the tuition.", "b": "Electric cars are charged overnight at home."}
+{"kind": "unrelated", "a": "Admission freeze is limited to two semesters.", "b": "A telescope reveals craters on the moon."}
+{"kind": "unrelated", "a": "Students receive an institute email account.", "b": "Marathon runners train for months before the race."}
+{"kind": "unrelated", "a": "Reference books stay in the library.", "b": "The stock market closed higher on Friday."}

@@ -23,6 +23,7 @@ spec:
         runAsNonRoot: true
         runAsUser: 10001
         runAsGroup: 10001
+        fsGroup: 10001
         seccompProfile: { type: RuntimeDefault }
       containers:
         - name: api
@@ -60,9 +61,13 @@ spec:
                 command: ["sleep", "10"]
           volumeMounts:
             - { name: tmp, mountPath: /tmp }
+            - { name: ragops, mountPath: /data }     # traces/ and results/ (survive pod restarts)
       volumes:
         - name: tmp
           emptyDir: {}
+        - name: ragops
+          persistentVolumeClaim:
+            claimName: ragops-data
 ---
 apiVersion: v1
 kind: Service

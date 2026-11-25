@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import re
+import threading
 import time
 from typing import Any
 
@@ -21,6 +22,7 @@ EXACT = re.compile(r"\b(?:[A-Za-z]{2,4}-?\d{3,4}|\d+(?:\.\d+)+)\b")
 
 class ChromaRetriever:
     name = "chroma"
+    _tl = threading.local()   # per-request retrieval details, read by the trace
 
     def __init__(self, settings: Settings) -> None:
         import chromadb  # the thin client, from chromadb-client in requirements.txt
@@ -31,16 +33,32 @@ class ChromaRetriever:
                                           settings=ChromaSettings(anonymized_telemetry=False))
         self._idx = "none"
         self._idx_at = 0.0
+        self._meta_cache: dict[str, Any] = {}
 
     def _collection(self) -> Any:
         return self.client.get_collection(self.settings.collection)
 
+    def _meta(self) -> dict[str, Any]:
+        if time.time() - self._idx_at > 30:
+            self._meta_cache = dict(self._collection().metadata or {})
+            self._idx = str(self._meta_cache.get("index_id", "none"))
+            self._idx_at = time.time()
+        return self._meta_cache
+
     def index_id(self) -> str:
         """Which index build is this? Part of every cache key. Refreshed every 30 s."""
-        if time.time() - self._idx_at > 30:
-            self._idx = str((self._collection().metadata or {}).get("index_id", "none"))
-            self._idx_at = time.time()
+        self._meta()
         return self._idx
+
+    def index_info(self) -> dict[str, Any]:
+        """What the trace records about the index this answer came from."""
+        m = self._meta()
+        return {"collection": self.settings.collection, "index_id": self._idx,
+                "embed_model": m.get("embed_model"), "embed_version": m.get("embed_version", "unknown"),
+                "chunk_size": m.get("chunk_size"), "chunk_overlap": m.get("chunk_overlap")}
+
+    def last_info(self) -> dict[str, Any]:
+        return getattr(self._tl, "info", {})
 
     def retrieve(self, question: str, k: int) -> list[Passage]:
         col = self._collection()
@@ -53,13 +71,24 @@ class ChromaRetriever:
         for cid, doc, m, dist in zip(res["ids"][0], res["documents"][0],
                                      res["metadatas"][0], res["distances"][0]):
             found[cid] = Passage(chunk_id=cid, text=doc, source=m["source"], section=m["section"],
-                                 page=m.get("page"), score=1 - dist)
+                                 page=m.get("page"), score=1 - dist, doc_id=m.get("doc_id", ""),
+                                 doc_version=str(m.get("doc_version", "")))
+        vector_order = list(found)
+        exact_terms: list[str] = []
         # Hybrid step: embeddings blur exact terms, so also look for them literally.
-        for term in set(EXACT.findall(question)):
+        for term in sorted(set(EXACT.findall(question))):
+            exact_terms.append(term)
             hit = col.get(where_document={"$contains": term}, where=where, limit=3,
                           include=["documents", "metadatas"])
             for cid, doc, m in zip(hit["ids"], hit["documents"], hit["metadatas"]):
                 found.setdefault(cid, Passage(
                     chunk_id=cid, text=doc, source=m["source"], section=m["section"],
-                    page=m.get("page"), score=self.settings.relevance_floor + 0.01))
-        return sorted(found.values(), key=lambda p: p.score, reverse=True)[:k]
+                    page=m.get("page"), score=self.settings.relevance_floor + 0.01,
+                    doc_id=m.get("doc_id", ""), doc_version=str(m.get("doc_version", ""))))
+        final = sorted(found.values(), key=lambda p: p.score, reverse=True)[:k]
+        self._tl.info = {"filter": where, "filter_off_reason": (
+            "question names an older version" if (no_filter and OLD_VERSION.search(question))
+            else "SUPERSEDED_FILTER=off" if no_filter else None),
+            "exact_terms": exact_terms, "vector_order": vector_order,
+            "final_order": [p.chunk_id for p in final]}
+        return final

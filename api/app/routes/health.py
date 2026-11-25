@@ -46,4 +46,9 @@ def readyz(request: Request, response: Response) -> dict[str, object]:
         request.app.state.cache.ping()
     except Exception as exc:
         return fail("redis", str(exc))
-    return {"status": "ready", "checks": {"chroma": count, "embed_model": pinned, "redis": "ok"}}
+    md = col.metadata or {}
+    return {"status": "ready", "checks": {"chroma": count, "embed_model": pinned, "redis": "ok"},
+            "index": {"collection": s.collection, "index_id": md.get("index_id"),
+                      "embed_version": md.get("embed_version", "unknown"),
+                      "chunk_size": md.get("chunk_size"), "top_k": s.top_k,
+                      "llm_model": s.llm_model}}

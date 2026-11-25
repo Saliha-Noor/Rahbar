@@ -1,10 +1,20 @@
-"""Citation check: a citation must match a passage that was actually retrieved (section 3.4)."""
+"""Guards: the citation check (section 3.4) and the retrieval rail (RAGOps D4)."""
 
 from __future__ import annotations
 
 import re
 
 from ..schemas import Answer, Citation, Passage
+
+# Instruction-like text. Same family of patterns as indexer/pipeline/patterns.py.
+INJECTION = re.compile(
+    r"(?:ignore|disregard|forget|override)\s+(?:all\s+|any\s+|the\s+|your\s+)?"
+    r"(?:previous|prior|above|earlier|system)\s+(?:instructions?|prompts?|rules?)"
+    r"|you\s+are\s+now\b|reveal\s+(?:your|the)\s+(?:system\s+)?(?:prompt|instructions)"
+    r"|do\s+not\s+(?:tell|inform)\s+the\s+user|<\|?\s*(?:system|im_start)",
+    re.I,
+)
+_SPLIT = re.compile(r"(?<=[.!?])\s+|\n+")
 
 
 def _n(s: str) -> str:
@@ -21,3 +31,28 @@ def keep_valid_citations(answer: Answer, passages: list[Passage]) -> tuple[Answe
         if p:
             good.append(Citation(source=p.source, section=p.section, page=p.page))
     return answer.model_copy(update={"citations": good}), len(answer.citations) - len(good)
+
+
+def redact_passages(passages: list[Passage]) -> tuple[list[Passage], list[dict[str, object]]]:
+    """Retrieval rail: cut instruction-like sentences out of retrieved text before it reaches the
+    prompt. The rest of the passage is kept (a section can hold real rules next to a planted line).
+    Returns the cleaned passages and one action record per redaction, for the trace."""
+    out: list[Passage] = []
+    actions: list[dict[str, object]] = []
+    for p in passages:
+        parts = _SPLIT.split(p.text)
+        bad = [s for s in parts if INJECTION.search(s)]
+        if not bad:
+            out.append(p)
+            continue
+        kept = "\n".join(s for s in parts if s not in bad)
+        out.append(p.model_copy(update={"text": kept}))
+        actions.append({"action": "redacted_injection", "chunk_id": p.chunk_id, "doc_id": p.doc_id,
+                        "source": p.source, "removed": [s.strip()[:120] for s in bad]})
+    return out, actions
+
+
+def question_flags(question: str) -> list[dict[str, object]]:
+    """The question itself tries to override the rules. Logged; the system prompt handles it."""
+    m = INJECTION.search(question)
+    return [{"action": "flagged_question_injection", "match": m.group(0)}] if m else []

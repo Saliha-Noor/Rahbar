@@ -32,13 +32,19 @@ class Chunk:
     page: int
     doc_version: str
     superseded: bool
+    doc_id: str = ""         # stable id of the source document (slug of the file name)
+    doc_hash: str = ""       # sha256 of the file the chunk came from
 
     def metadata(self) -> dict[str, str | int | bool]:
         """Chroma metadata values must be str, int, float or bool."""
-        return {
+        meta: dict[str, str | int | bool] = {
             "source": self.source,
             "section": self.section,
             "page": self.page,
             "doc_version": self.doc_version,
             "superseded": self.superseded,
         }
+        if self.doc_id:
+            meta["doc_id"] = self.doc_id
+            meta["doc_hash"] = self.doc_hash
+        return meta

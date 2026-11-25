@@ -1,0 +1,4 @@
+httpx==0.28.1
+pyyaml==6.0.2
+chromadb-client==1.0.12
+posthog==5.4.0
