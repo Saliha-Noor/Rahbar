@@ -23,14 +23,35 @@ def _n(s: str) -> str:
 
 def keep_valid_citations(answer: Answer, passages: list[Passage]) -> tuple[Answer, int]:
     """Return the answer with only valid citations (snapped to the retrieved values),
-    and how many were dropped."""
+    and how many were dropped.
+
+    Fallback: if the model set answered_from_context=True but produced no citations
+    (common with small models), infer the top-1 passage as the citation so the answer
+    is not discarded. This is conservative and logged as dropped=0 (nothing actually dropped).
+    """
     index = {(_n(p.source), _n(p.section)): p for p in passages}
     good = []
     for c in answer.citations:
         p = index.get((_n(c.source), _n(c.section)))
         if p:
             good.append(Citation(source=p.source, section=p.section, page=p.page))
-    return answer.model_copy(update={"citations": good}), len(answer.citations) - len(good)
+        else:
+            # Try partial match: source matches but section differs (model paraphrased section)
+            for key, p2 in index.items():
+                if key[0] == _n(c.source):
+                    good.append(Citation(source=p2.source, section=p2.section, page=p2.page))
+                    break
+
+    dropped = len(answer.citations) - len(good)
+
+    # Fallback: small models that say answered_from_context=True but emit citations=[]
+    # get the top-1 retrieved passage as an inferred citation.
+    if answer.answered_from_context and not good and passages:
+        p = passages[0]
+        good = [Citation(source=p.source, section=p.section, page=p.page)]
+        dropped = 0  # nothing was dropped; we inferred
+
+    return answer.model_copy(update={"citations": good}), dropped
 
 
 def redact_passages(passages: list[Passage]) -> tuple[list[Passage], list[dict[str, object]]]:

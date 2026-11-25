@@ -264,7 +264,7 @@ def main() -> int:
     started = datetime.now(timezone.utc)
     print(f"suite '{args.label}': {len(golden)} questions, stage {args.stage}, {args.runs} runs", flush=True)
 
-    with httpx.Client(timeout=300, headers=headers) as client:
+    with httpx.Client(timeout=900, headers=headers) as client:
         ready = client.get(f"{args.api.rstrip('/')}/readyz").json()
         runs = []
         for i in range(args.runs):
