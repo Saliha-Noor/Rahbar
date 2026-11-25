@@ -68,8 +68,13 @@ def redact_passages(passages: list[Passage]) -> tuple[list[Passage], list[dict[s
             continue
         kept = "\n".join(s for s in parts if s not in bad)
         out.append(p.model_copy(update={"text": kept}))
-        actions.append({"action": "redacted_injection", "chunk_id": p.chunk_id, "doc_id": p.doc_id,
-                        "source": p.source, "removed": [s.strip()[:120] for s in bad]})
+        actions.append({
+            "action": "redacted_injection",
+            "chunk_id": p.chunk_id,
+            "doc_id": p.doc_id or p.source,
+            "source": p.source,
+            "removed": [s.strip()[:120] for s in bad],
+        })
     return out, actions
 
 

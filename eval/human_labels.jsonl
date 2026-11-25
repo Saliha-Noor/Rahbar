@@ -1,0 +1,10 @@
+{"id": "q01", "supported": true, "note": "CGPA 2.0 is stated in academic rules section 5.5"}
+{"id": "q02", "supported": true, "note": "Three consecutive semesters below 2.0 CGPA per rules"}
+{"id": "q03", "supported": true, "note": "Up to 2 semesters freeze is documented"}
+{"id": "q04", "supported": true, "note": "Fee refund schedule is in fee-structure-page.html"}
+{"id": "q06", "supported": true, "note": "Replacement grade used per academic rules"}
+{"id": "q08", "supported": true, "note": "A- is 3.67 grade points per grading page"}
+{"id": "q14", "supported": true, "note": "Fee per credit hour in fee-structure-page.html"}
+{"id": "q15", "supported": true, "note": "CGPA 2.0 required for graduation per rules"}
+{"id": "u01", "supported": false, "note": "Capital of Australia is not in university documents"}
+{"id": "u02", "supported": false, "note": "Cricket tournament winner not in corpus"}
