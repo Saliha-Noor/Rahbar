@@ -80,7 +80,7 @@ spec:
       ports:
         - { protocol: TCP, port: 6379 }
     - to:
-        - ipBlock: { cidr: 192.168.49.1/32 }
+        - ipBlock: { cidr: 192.168.65.254/32 }
       ports:
         - { protocol: TCP, port: 11434 }
     - to:
@@ -138,7 +138,7 @@ spec:
       ports:
         - { protocol: TCP, port: 8000 }
     - to:
-        - ipBlock: { cidr: 192.168.49.1/32 }
+        - ipBlock: { cidr: 192.168.65.254/32 }
       ports:
         - { protocol: TCP, port: 11434 }
 ---
