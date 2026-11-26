@@ -59,7 +59,7 @@ spec:
       ports:
         - { protocol: TCP, port: 8000 }
 ---
-# api egress: chroma, redis, and the LLM host
+# api egress: chroma, redis, Ollama host, and external HTTPS for hosted LLM
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -83,6 +83,10 @@ spec:
         - ipBlock: { cidr: 192.168.49.1/32 }
       ports:
         - { protocol: TCP, port: 11434 }
+    - to:
+        - ipBlock: { cidr: 0.0.0.0/0, except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16] }
+      ports:
+        - { protocol: TCP, port: 443 }
 ---
 # chroma: from api and indexer only
 apiVersion: networking.k8s.io/v1
@@ -179,6 +183,10 @@ spec:
         - ipBlock: { cidr: 192.168.49.1/32 }
       ports:
         - { protocol: TCP, port: 11434 }
+    - to:
+        - ipBlock: { cidr: 0.0.0.0/0, except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16] }
+      ports:
+        - { protocol: TCP, port: 443 }
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
