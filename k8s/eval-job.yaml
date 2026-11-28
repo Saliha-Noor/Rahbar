@@ -1,15 +1,10 @@
-# Part B suite + release gate as a Kubernetes Job (assignment F2).
-#   baseline:   kubectl apply -f k8s/eval-job.yaml                     (LABEL=baseline: no gate)
-#   candidate:  scripts/ragops.sh eval candidate-c250 api-candidate     (sets LABEL and API_URL, then applies)
-# Result files land on the ragops-data volume (/data/results); the Job FAILS when the gate fails.
-# The gate thresholds come from the ConfigMap rahbar-gate, mounted at /config/gate.yaml.
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: eval
   namespace: rahbar
 spec:
-  backoffLimit: 0               # a failed gate is a verdict, not a flake: do not retry it
+  backoffLimit: 0            
   ttlSecondsAfterFinished: 86400
   template:
     metadata:
@@ -43,7 +38,7 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities: { drop: ["ALL"] }
-          resources:                 # F5: replace with your own `kubectl top` measurements
+          resources:                 
             requests: { cpu: 100m, memory: 128Mi }
             limits: { cpu: 500m, memory: 256Mi }
           volumeMounts:
