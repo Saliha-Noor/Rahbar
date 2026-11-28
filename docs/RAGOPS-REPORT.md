@@ -1,6 +1,6 @@
 # RAGOps layer on RAHBAR: report (max 8 pages; convert to PDF, screenshots go in the appendix)
 
-**Group:** Saliha Noor (ROLL NO), Sajal Ishtiaq (ROLL NO)   **Repository:** https://github.com/Saliha-Noor/Rahbar
+**Group:** Saliha Noor (24i-3066), Sajal Ishtiaq (24i-3041)   **Repository:** https://github.com/Saliha-Noor/Rahbar
 
 ## 1. Figure 3 stage map
 
