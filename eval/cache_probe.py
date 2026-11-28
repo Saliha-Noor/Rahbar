@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Cosine similarity of question pairs, to choose CACHE_THRESHOLD (section 3.3).
 
 Edit PAIRS for your corpus: paraphrases that SHOULD share a cached answer (True) and
@@ -20,7 +19,6 @@ PAIRS = [
     ("What is the minimum attendance to sit the exam?", "How much attendance do I need for the final exam?", True),
     ("Can I repeat a course?", "Can I withdraw from a course?", False),
     ("What is the fee per credit hour?", "What is the refund timeline?", False),
-    # TODO(you): add 4 more pairs from your own corpus (version and exact-term near-misses).
 ]
 
 
@@ -42,14 +40,15 @@ def main() -> None:
         return r.json()["embeddings"][0]
 
     same_scores, diff_scores = [], []
+    
     for a, b, same in PAIRS:
         s = cos(emb(a), emb(b))
         (same_scores if same else diff_scores).append(s)
         print(f"{s:.3f}  should_share={same!s:<5} | {a}  <->  {b}")
+        
     if same_scores and diff_scores:
         print(f"\nlowest paraphrase: {min(same_scores):.3f}   highest near-miss: {max(diff_scores):.3f}")
         print("CACHE_THRESHOLD must be above the near-miss and at or below the paraphrases")
-
 
 if __name__ == "__main__":
     main()
