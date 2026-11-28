@@ -16,6 +16,7 @@ spec:
         runAsNonRoot: true
         runAsUser: 10001
         runAsGroup: 10001
+        fsGroup: 10001
         seccompProfile: { type: RuntimeDefault }
       containers:
         - name: indexer
@@ -29,15 +30,14 @@ spec:
             readOnlyRootFilesystem: true
             capabilities: { drop: ["ALL"] }
           resources:
-            requests: { cpu: 100m, memory: 256Mi }
-            limits: { cpu: "1", memory: 1Gi }
+            requests: { cpu: 100m, memory: 512Mi }
+            limits: { cpu: "1", memory: 2Gi }
           volumeMounts:
             - { name: tmp, mountPath: /tmp }
-            - { name: corpus, mountPath: /corpus, readOnly: true }
+            - { name: corpus, mountPath: /corpus }   # rw: _quarantine, _archive, _state, _reports
       volumes:
         - name: tmp
           emptyDir: {}
         - name: corpus
           persistentVolumeClaim:
             claimName: corpus-data
-            readOnly: true

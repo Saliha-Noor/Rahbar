@@ -1,0 +1,11 @@
+# Release gate thresholds (assignment C2). In the cluster this file is the ConfigMap
+# `rahbar-gate` (k8s/base/gate-configmap.yaml), mounted at /config/gate.yaml: edit the
+# ConfigMap and re-run the gate Job; nothing is rebuilt.
+#
+# Every number needs a justification in the report. Starting points, calibrated for a
+# 1B-parameter model on a laptop and a ~30-question golden set (one question = 3 points):
+recall_at_5_max_drop_points: 2     # candidate recall@5 may be at most 2 points below baseline
+faithfulness_min: 0.60             # judge-scored share of answers supported by their context
+p95_latency_max_s: 60              # end-to-end p95 on laptop CPU inference
+abstention_not_below_baseline: true
+citation_validity_min: 0.90

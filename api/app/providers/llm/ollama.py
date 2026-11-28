@@ -25,7 +25,8 @@ class OllamaProvider:
             "messages": build_messages(question, passages),
             "stream": False,
             "format": Answer.model_json_schema(),   # strongest enforcement Ollama offers
-            "options": {"temperature": s.temperature},
+            "options": {"temperature": s.temperature,
+                        **({"seed": s.llm_seed} if s.llm_seed is not None else {})},
         }
         last = "unknown error"
         for _ in range(2):  # one try, then one retry (section 3.4)

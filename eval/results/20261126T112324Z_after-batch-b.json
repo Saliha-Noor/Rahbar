@@ -1,0 +1,952 @@
+{
+  "label": "after-batch-b",
+  "timestamp": "2026-11-26T11:23:24.093619+00:00",
+  "stage": "B",
+  "questions": 30,
+  "api": "http://api:8000",
+  "index": {
+    "collection": "rahbar",
+    "index_id": "1795681268794246203",
+    "embed_version": "1",
+    "chunk_size": 400,
+    "top_k": 5,
+    "llm_model": "openai/gpt-oss-20b"
+  },
+  "seed": 42,
+  "module": {
+    "embed_model": "nomic-embed-text",
+    "embed_ms_per_chunk": 90.4,
+    "paraphrase_pairs": 15,
+    "unrelated_pairs": 15,
+    "paraphrase_cos_mean": 0.8278,
+    "unrelated_cos_mean": 0.3795,
+    "gap": 0.4483,
+    "determinism_max_abs_diff": 0.0
+  },
+  "component": {
+    "recall@3": 0.1458,
+    "recall@5": 0.1875,
+    "mrr": 0.1542,
+    "ndcg@5": 0.1513,
+    "page_match@5": 0.1875
+  },
+  "noise_typos": {
+    "typo_rate": 0.15,
+    "metrics": {
+      "recall@3": 0.1458,
+      "recall@5": 0.1458,
+      "mrr": 0.1389,
+      "ndcg@5": 0.1297,
+      "page_match@5": 0.1458
+    },
+    "delta": {
+      "recall@3": 0.0,
+      "recall@5": -0.0417,
+      "mrr": -0.0153,
+      "ndcg@5": -0.0216,
+      "page_match@5": -0.0417
+    }
+  },
+  "end_to_end": {
+    "abstention_correctness": 1.0,
+    "false_abstention_rate": 0.7083333333333334,
+    "citation_validity": 1.0,
+    "latency_p50_s": 1.548,
+    "latency_p95_s": 3.138,
+    "faithfulness": null,
+    "faithfulness_judged": 0
+  },
+  "judge_vs_human": {
+    "status": "labels found but none match judged answers"
+  },
+  "stochasticity": {
+    "runs": 2,
+    "note": "generation seed fixed on the API (LLM_SEED); latency varies with machine load; retrieval is deterministic",
+    "diff_run2_minus_run1": {
+      "recall@3": 0.0,
+      "recall@5": 0.0,
+      "mrr": 0.0,
+      "ndcg@5": 0.0,
+      "page_match@5": 0.0,
+      "abstention_correctness": 0.0,
+      "false_abstention_rate": 0.2083,
+      "citation_validity": 0.0,
+      "latency_p50_s": -0.014,
+      "latency_p95_s": -0.267,
+      "faithfulness": null,
+      "faithfulness_judged": 0
+    }
+  },
+  "per_question": [
+    {
+      "id": "q01",
+      "kind": "answerable",
+      "hard": false,
+      "origin": "human",
+      "answered": true,
+      "top_chunks": [
+        [
+          "grading-page.html",
+          "Warning/Probation",
+          0.817
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "5.5 If at the end of a semester (including summer semester) CGPA",
+          0.813
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "5.2 The semester work will normally contribute 50% towards the",
+          0.811
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 9.56,
+      "request_id": "9f741d6d60f6427282281a3b2de2f969",
+      "differs_between_runs": true
+    },
+    {
+      "id": "q02",
+      "kind": "answerable",
+      "hard": false,
+      "origin": "human",
+      "answered": true,
+      "top_chunks": [
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "3.28 If the CGPA of an undergraduate student fall below the",
+          0.847
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "5.5 If at the end of a semester (including summer semester) CGPA",
+          0.827
+        ],
+        [
+          "grading-page.html",
+          "Warning/Probation",
+          0.783
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 2.3,
+      "request_id": "cca97a4682b345efb7e7cfb9fa3fafbe",
+      "differs_between_runs": true
+    },
+    {
+      "id": "q03",
+      "kind": "answerable",
+      "hard": false,
+      "origin": "human",
+      "answered": true,
+      "top_chunks": [
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "4.18 A student may request freezing of his/her admission for up to",
+          0.831
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "4.26 Students on any form of financial support are not allowed to",
+          0.774
+        ],
+        [
+          "prospectus-2026-academic-rules-and-regulations.pdf",
+          "19. Rules for Summer Semester",
+          0.732
+        ]
+      ],
+      "recall@5": 1.0,
+      "judge": null,
+      "seconds": 1.27,
+      "request_id": "d9339c29563e4fc1b370eae83abb8981",
+      "differs_between_runs": true
+    },
+    {
+      "id": "q04",
+      "kind": "answerable",
+      "hard": false,
+      "origin": "human",
+      "answered": true,
+      "top_chunks": [
+        [
+          "fee-structure-update-2027.md",
+          "2. Refund",
+          0.838
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "4.20 Students are not allowed to drop any course in the first",
+          0.713
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "4.20 Students are not allowed to drop any course in the first",
+          0.676
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 2.53,
+      "request_id": "9ba15b9833874035810545ee26cd867b",
+      "differs_between_runs": true
+    },
+    {
+      "id": "q05",
+      "kind": "answerable",
+      "hard": false,
+      "origin": "human",
+      "answered": false,
+      "top_chunks": [
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "1.19 A student can register for a maximum of two courses in",
+          0.742
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "1.19 A student can register for a maximum of two courses in",
+          0.742
+        ],
+        [
+          "prospectus-2026-academic-rules-and-regulations.pdf",
+          "19. Rules for Summer Semester",
+          0.732
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 2.69,
+      "request_id": "8d1731c005c94ca3baf483c7930a8c3e",
+      "differs_between_runs": true
+    },
+    {
+      "id": "q06",
+      "kind": "answerable",
+      "hard": false,
+      "origin": "human",
+      "answered": false,
+      "top_chunks": [
+        [
+          "grading-page.html",
+          "Repeating a Course",
+          0.795
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "5.1 The performance of students is assessed during the semester",
+          0.767
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "2.7 In CGPA calculation for the courses that have been repeated,",
+          0.744
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 1.57,
+      "request_id": "0ee173397a6040378605d2e1b8647393",
+      "differs_between_runs": false
+    },
+    {
+      "id": "q07",
+      "kind": "answerable",
+      "hard": false,
+      "origin": "human",
+      "answered": false,
+      "top_chunks": [
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "NATIONAL UNIVERSITY OF COMPUTER AND EMERGING SCIENCES",
+          0.724
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "NATIONAL UNIVERSITY OF COMPUTER AND EMERGING SCIENCES",
+          0.688
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "NATIONAL UNIVERSITY OF COMPUTER AND EMERGING SCIENCES",
+          0.677
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 2.52,
+      "request_id": "24c18db68956459f8720f99154828dc5",
+      "differs_between_runs": false
+    },
+    {
+      "id": "q08",
+      "kind": "answerable",
+      "hard": false,
+      "origin": "human",
+      "answered": false,
+      "top_chunks": [
+        [
+          "prospectus-2026-academic-rules-and-regulations.pdf",
+          "3. Academic Year The points are used for",
+          0.719
+        ],
+        [
+          "prospectus-2026-academic-rules-and-regulations.pdf",
+          "3. Academic Year The points are used for",
+          0.713
+        ],
+        [
+          "prospectus-2026-academic-rules-and-regulations.pdf",
+          "7. Grade Point Average",
+          0.694
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 1.37,
+      "request_id": "34571717b64c4722b88ff830602b7b8d",
+      "differs_between_runs": false
+    },
+    {
+      "id": "q09",
+      "kind": "answerable",
+      "hard": true,
+      "origin": "human",
+      "answered": false,
+      "top_chunks": [
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "2. Objectives",
+          0.842
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "1. Introduction",
+          0.838
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "10. Policy on Generative",
+          0.825
+        ]
+      ],
+      "recall@5": 0.5,
+      "judge": null,
+      "seconds": 2.41,
+      "request_id": "3df8d25f2b354cd1b5c1ff5b0373bcf0",
+      "differs_between_runs": false
+    },
+    {
+      "id": "q10",
+      "kind": "answerable",
+      "hard": false,
+      "origin": "human",
+      "answered": false,
+      "top_chunks": [
+        [
+          "career-services-guide-2026.md",
+          "2. Internships",
+          0.657
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "3.3 New admissions in undergraduate programs are",
+          0.644
+        ],
+        [
+          "career-services-guide-2026.md",
+          "3. Job fair",
+          0.634
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 2.22,
+      "request_id": "33a4a83c50024629a68f1e72b26ecb6c",
+      "differs_between_runs": true
+    },
+    {
+      "id": "q11",
+      "kind": "answerable",
+      "hard": true,
+      "origin": "human",
+      "answered": false,
+      "top_chunks": [
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "4.23 Application for withdrawal from a course must be",
+          0.785
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "4.23 Application for withdrawal from a course must be",
+          0.785
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "4.20 Students are not allowed to drop any course in the first",
+          0.768
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 1.52,
+      "request_id": "ace63b99f0ce4c83b20d05eb1b73013e",
+      "differs_between_runs": false
+    },
+    {
+      "id": "q12",
+      "kind": "answerable",
+      "hard": true,
+      "origin": "human",
+      "answered": false,
+      "top_chunks": [
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "3.18 Only credits of relevant courses, which have been earned",
+          0.756
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "3.22 Only credits of relevant courses with at least C grade are",
+          0.705
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "3.22 Only credits of relevant courses with at least C grade are",
+          0.699
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 0.37,
+      "request_id": "1ce2afa02033469c9409dce4ddd73a47",
+      "differs_between_runs": false
+    },
+    {
+      "id": "q13",
+      "kind": "answerable",
+      "hard": false,
+      "origin": "human",
+      "answered": false,
+      "top_chunks": [
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "1.8 A classroom-teaching hour or one period is of 50 to 60",
+          0.71
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "3.33 A student can request closure of his/her admission to pursue",
+          0.71
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "11. Monitoring & Compliance",
+          0.708
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 1.46,
+      "request_id": "cc2350e089b4489e94d74f13d9586442",
+      "differs_between_runs": false
+    },
+    {
+      "id": "q14",
+      "kind": "answerable",
+      "hard": false,
+      "origin": "human",
+      "answered": false,
+      "top_chunks": [
+        [
+          "fee-structure-update-2027.md",
+          "1. Tuition",
+          0.852
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "1.24 When a student is readmitted with credit exemptions from a",
+          0.68
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "3.7 Exemption of courses studied at another University cannot be",
+          0.672
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 1.38,
+      "request_id": "663b705059f64aae97bb4fe673155185",
+      "differs_between_runs": false
+    },
+    {
+      "id": "q15",
+      "kind": "answerable",
+      "hard": false,
+      "origin": "human",
+      "answered": false,
+      "top_chunks": [
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "7.2 Students earning high CGPA as below would have the following",
+          0.743
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "2.6 CGPA is calculated as the weighted average for all semesters",
+          0.738
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "2.6 CGPA is calculated as the weighted average for all semesters",
+          0.738
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 1.59,
+      "request_id": "e8ab9efec75e4682b1cfbbde9b1adac6",
+      "differs_between_runs": true
+    },
+    {
+      "id": "q16",
+      "kind": "unanswerable",
+      "hard": false,
+      "origin": "human",
+      "answered": false,
+      "top_chunks": [
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "REGULATIONS",
+          0.655
+        ],
+        [
+          "annual-report-2023-24.pdf",
+          "1. To identify and attract the most promising students from diverse",
+          0.628
+        ],
+        [
+          "annual-report-2019-20.pdf",
+          "NATIONAL UNIVERSITY",
+          0.599
+        ]
+      ],
+      "recall@5": null,
+      "judge": null,
+      "seconds": 1.46,
+      "request_id": "cede2b6e0d304ba8a363b96b11d2c1ad",
+      "differs_between_runs": false
+    },
+    {
+      "id": "q17",
+      "kind": "unanswerable",
+      "hard": false,
+      "origin": "human",
+      "answered": false,
+      "top_chunks": [
+        [
+          "annual-report-2023-24.pdf",
+          "6. Other Scholarships",
+          0.735
+        ],
+        [
+          "annual-report-2019-20.pdf",
+          "6. Other Scholarships",
+          0.718
+        ],
+        [
+          "annual-report-2023-24.pdf",
+          "1. To identify and attract the most promising students from diverse",
+          0.686
+        ]
+      ],
+      "recall@5": null,
+      "judge": null,
+      "seconds": 2.26,
+      "request_id": "087af418ab5748f896e18554ca87c026",
+      "differs_between_runs": false
+    },
+    {
+      "id": "q18",
+      "kind": "answerable",
+      "hard": false,
+      "origin": "human",
+      "answered": true,
+      "top_chunks": [
+        [
+          "undergraduate-academic-rules-aug-2023.pdf",
+          "1.20 A student can only register for courses for which he/she has passed",
+          0.746
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "1.21 Students are required to maintain 100% attendance in",
+          0.735
+        ],
+        [
+          "undergraduate-academic-rules-aug-2023.pdf",
+          "1.21 Students are required to maintain 100% attendance in lectures, labs,",
+          0.735
+        ]
+      ],
+      "recall@5": 1.0,
+      "judge": null,
+      "seconds": 2.11,
+      "request_id": "892f1bcf8d9e41bd82984778d86c04c6",
+      "differs_between_runs": true
+    },
+    {
+      "id": "h01",
+      "kind": "answerable",
+      "hard": true,
+      "origin": "synthetic",
+      "answered": false,
+      "top_chunks": [
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "5.5 If at the end of a semester (including summer semester) CGPA",
+          0.79
+        ],
+        [
+          "grading-page.html",
+          "Warning/Probation",
+          0.748
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "NATIONAL UNIVERSITY OF COMPUTER AND EMERGING SCIENCES",
+          0.727
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 1.32,
+      "request_id": "f314233334be4807bab814fa70c3117b",
+      "differs_between_runs": false
+    },
+    {
+      "id": "h02",
+      "kind": "answerable",
+      "hard": true,
+      "origin": "synthetic",
+      "answered": true,
+      "top_chunks": [
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "1.23 The minimum duration of a Bachelor\u2019s degree is four",
+          0.702
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "4.26 Students on any form of financial support are not allowed to",
+          0.686
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "1.15 If the requirement of minimum lectures is not being met (due",
+          0.66
+        ]
+      ],
+      "recall@5": 1.0,
+      "judge": null,
+      "seconds": 1.86,
+      "request_id": "29d7c0e627a54a2f8eb53ca224132006",
+      "differs_between_runs": true
+    },
+    {
+      "id": "h03",
+      "kind": "answerable",
+      "hard": true,
+      "origin": "synthetic",
+      "answered": false,
+      "top_chunks": [
+        [
+          "fee-structure-update-2027.md",
+          "2. Refund",
+          0.755
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "4.20 Students are not allowed to drop any course in the first",
+          0.682
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "4.20 Students are not allowed to drop any course in the first",
+          0.674
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 1.42,
+      "request_id": "7ea068258dd24311a52fe6b6286c36c7",
+      "differs_between_runs": false
+    },
+    {
+      "id": "h04",
+      "kind": "answerable",
+      "hard": true,
+      "origin": "synthetic",
+      "answered": false,
+      "top_chunks": [
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "6.4 The contact hours per week during the Summer Semester will",
+          0.705
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "6.4 The contact hours per week during the Summer Semester will",
+          0.705
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "6.1 Summer semester is an 8-week semester and is meant to",
+          0.688
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 1.22,
+      "request_id": "6b5eac9478b54ce7b52b9f473f85488d",
+      "differs_between_runs": true
+    },
+    {
+      "id": "h05",
+      "kind": "answerable",
+      "hard": true,
+      "origin": "synthetic",
+      "answered": false,
+      "top_chunks": [
+        [
+          "grading-page.html",
+          "Repeating a Course",
+          0.713
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "5.1 The performance of students is assessed during the semester",
+          0.713
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "2.7 In CGPA calculation for the courses that have been repeated,",
+          0.694
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 1.75,
+      "request_id": "6091810136ea42c885b710559c12e4ab",
+      "differs_between_runs": false
+    },
+    {
+      "id": "h06",
+      "kind": "answerable",
+      "hard": true,
+      "origin": "synthetic",
+      "answered": false,
+      "top_chunks": [
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "NATIONAL UNIVERSITY OF COMPUTER AND EMERGING SCIENCES",
+          0.702
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "NATIONAL UNIVERSITY OF COMPUTER AND EMERGING SCIENCES",
+          0.655
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "2. A student travelling during",
+          0.651
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 0.52,
+      "request_id": "43ee1dd145a74c7cae7ae3ce62665af3",
+      "differs_between_runs": false
+    },
+    {
+      "id": "h07",
+      "kind": "answerable",
+      "hard": true,
+      "origin": "synthetic",
+      "answered": false,
+      "top_chunks": [
+        [
+          "grading-page.html",
+          "Warning/Probation",
+          0.678
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "3.28 If the CGPA of an undergraduate student fall below the",
+          0.675
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "2.6 CGPA is calculated as the weighted average for all semesters",
+          0.674
+        ]
+      ],
+      "recall@5": 0.0,
+      "judge": null,
+      "seconds": 0.4,
+      "request_id": "37bef4485d7e46fbb1eee40ab7e52f98",
+      "differs_between_runs": true
+    },
+    {
+      "id": "u01",
+      "kind": "unanswerable",
+      "hard": false,
+      "origin": "synthetic",
+      "answered": false,
+      "top_chunks": [
+        [
+          "annual-report-2019-20.pdf",
+          "NATIONAL UNIVERSITY",
+          0.517
+        ],
+        [
+          "annual-report-2019-20.pdf",
+          "NATIONAL UNIVERSITY",
+          0.504
+        ],
+        [
+          "annual-report-2023-24.pdf",
+          "1. To identify and attract the most promising students from diverse",
+          0.489
+        ]
+      ],
+      "recall@5": null,
+      "judge": null,
+      "seconds": 1.16,
+      "request_id": "0d856abbb96c4ed8bfea97f45b39fc9a",
+      "differs_between_runs": false
+    },
+    {
+      "id": "u02",
+      "kind": "unanswerable",
+      "hard": false,
+      "origin": "synthetic",
+      "answered": false,
+      "top_chunks": [
+        [
+          "annual-report-2023-24.pdf",
+          "AI-NEXUS",
+          0.69
+        ],
+        [
+          "annual-report-2023-24.pdf",
+          "ISLAMABAD CAMPUS",
+          0.674
+        ],
+        [
+          "annual-report-2023-24.pdf",
+          "ISLAMABAD CAMPUS",
+          0.658
+        ]
+      ],
+      "recall@5": null,
+      "judge": null,
+      "seconds": 2.19,
+      "request_id": "b6ac1959c0794ffcadc34700931f1ff5",
+      "differs_between_runs": false
+    },
+    {
+      "id": "u03",
+      "kind": "unanswerable",
+      "hard": false,
+      "origin": "synthetic",
+      "answered": false,
+      "top_chunks": [
+        [
+          "fee-structure-update-2027.md",
+          "1. Tuition",
+          0.571
+        ],
+        [
+          "annual-report-2019-20.pdf",
+          "1. Merit Scholarships for Bachelor Students",
+          0.542
+        ],
+        [
+          "annual-report-2023-24.pdf",
+          "1. Merit Scholarships for Bachelor Students",
+          0.542
+        ]
+      ],
+      "recall@5": null,
+      "judge": null,
+      "seconds": 1.51,
+      "request_id": "d605e384efe148efbbd8abbed36de066",
+      "differs_between_runs": true
+    },
+    {
+      "id": "u04",
+      "kind": "unanswerable",
+      "hard": false,
+      "origin": "synthetic",
+      "answered": false,
+      "top_chunks": [
+        [
+          "annual-report-2023-24.pdf",
+          "PESHAWAR CAMPUS",
+          0.617
+        ],
+        [
+          "annual-report-2023-24.pdf",
+          "2. Alumni Homecoming Event",
+          0.594
+        ],
+        [
+          "annual-report-2023-24.pdf",
+          "LAHORE CAMPUS",
+          0.586
+        ]
+      ],
+      "recall@5": null,
+      "judge": null,
+      "seconds": 3.5,
+      "request_id": "abb9f94a06054c07aca7408cd3b2eb83",
+      "differs_between_runs": false
+    },
+    {
+      "id": "b01",
+      "kind": "answerable",
+      "hard": false,
+      "origin": "synthetic",
+      "answered": true,
+      "top_chunks": [
+        [
+          "fee-structure-update-2027.md",
+          "1. Tuition",
+          0.894
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "3.7 Exemption of courses studied at another University cannot be",
+          0.681
+        ],
+        [
+          "academic-rules-handbook-jun-2026.pdf",
+          "1.24 When a student is readmitted with credit exemptions from a",
+          0.674
+        ]
+      ],
+      "recall@5": 1.0,
+      "judge": null,
+      "seconds": 0.9,
+      "request_id": "64fdf31bf3954786b9647fa906eedc57",
+      "differs_between_runs": true
+    }
+  ]
+}

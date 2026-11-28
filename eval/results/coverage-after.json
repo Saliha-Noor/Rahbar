@@ -1,0 +1,147 @@
+{
+  "label": "after",
+  "stage": "E4",
+  "golden_questions": 37,
+  "live_queries": 40,
+  "threshold": 0.7,
+  "coverage": 0.675,
+  "min_coverage": 0.85,
+  "similarity_quartiles": [
+    0.558,
+    0.662,
+    0.819,
+    0.906
+  ],
+  "uncovered": [
+    {
+      "query": "If I am absent too much, what grade do I get?",
+      "best_sim": 0.659,
+      "nearest_golden": "q06"
+    },
+    {
+      "query": "How do I appeal a grade?",
+      "best_sim": 0.642,
+      "nearest_golden": "q06"
+    },
+    {
+      "query": "Can I take a course in the summer to improve my grade?",
+      "best_sim": 0.662,
+      "nearest_golden": "h04"
+    },
+    {
+      "query": "What is the minimum credit load per semester?",
+      "best_sim": 0.679,
+      "nearest_golden": "b01"
+    },
+    {
+      "query": "What are the rules on plagiarism in assignments?",
+      "best_sim": 0.587,
+      "nearest_golden": "q13"
+    },
+    {
+      "query": "Is there a grading scale for letter grades?",
+      "best_sim": 0.662,
+      "nearest_golden": "q08"
+    },
+    {
+      "query": "What is the refund policy for the fee?",
+      "best_sim": 0.646,
+      "nearest_golden": "q04"
+    },
+    {
+      "query": "What does the handbook say about academic probation?",
+      "best_sim": 0.655,
+      "nearest_golden": "q13"
+    },
+    {
+      "query": "Who can condone absences for medical reasons?",
+      "best_sim": 0.592,
+      "nearest_golden": "q18"
+    },
+    {
+      "query": "How do I apply for a scholarship?",
+      "best_sim": 0.594,
+      "nearest_golden": "e03"
+    },
+    {
+      "query": "What is the parking fee for motorbikes?",
+      "best_sim": 0.561,
+      "nearest_golden": "q17"
+    },
+    {
+      "query": "How many devices can I connect to campus Wi-Fi?",
+      "best_sim": 0.638,
+      "nearest_golden": "e01"
+    },
+    {
+      "query": "Is there a gym or sports complex on campus?",
+      "best_sim": 0.558,
+      "nearest_golden": "u03"
+    }
+  ],
+  "topics": [
+    {
+      "topic_hint": "grade absent too",
+      "queries": [
+        "If I am absent too much, what grade do I get?",
+        "How do I appeal a grade?",
+        "Can I take a course in the summer to improve my grade?",
+        "Who can condone absences for medical reasons?"
+      ]
+    },
+    {
+      "topic_hint": "minimum credit load",
+      "queries": [
+        "What is the minimum credit load per semester?"
+      ]
+    },
+    {
+      "topic_hint": "rules plagiarism assignments",
+      "queries": [
+        "What are the rules on plagiarism in assignments?"
+      ]
+    },
+    {
+      "topic_hint": "grading scale letter",
+      "queries": [
+        "Is there a grading scale for letter grades?"
+      ]
+    },
+    {
+      "topic_hint": "refund policy fee",
+      "queries": [
+        "What is the refund policy for the fee?"
+      ]
+    },
+    {
+      "topic_hint": "handbook say about",
+      "queries": [
+        "What does the handbook say about academic probation?"
+      ]
+    },
+    {
+      "topic_hint": "apply scholarship",
+      "queries": [
+        "How do I apply for a scholarship?"
+      ]
+    },
+    {
+      "topic_hint": "parking fee motorbikes",
+      "queries": [
+        "What is the parking fee for motorbikes?"
+      ]
+    },
+    {
+      "topic_hint": "many devices connect",
+      "queries": [
+        "How many devices can I connect to campus Wi-Fi?"
+      ]
+    },
+    {
+      "topic_hint": "gym sports complex",
+      "queries": [
+        "Is there a gym or sports complex on campus?"
+      ]
+    }
+  ]
+}

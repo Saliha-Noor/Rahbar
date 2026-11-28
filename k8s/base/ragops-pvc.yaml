@@ -1,0 +1,10 @@
+# Traces, evaluation results and (later) anything the report scripts read. Mounted by the API
+# pods (/data) and the evaluation Jobs. Survives pod restarts and rollouts.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ragops-data
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests: { storage: 1Gi }

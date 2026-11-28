@@ -1,0 +1,61 @@
+# Part B suite + release gate as a Kubernetes Job (assignment F2).
+#   baseline:   kubectl apply -f k8s/eval-job.yaml                     (LABEL=baseline: no gate)
+#   candidate:  scripts/ragops.sh eval candidate-c250 api-candidate     (sets LABEL and API_URL, then applies)
+# Result files land on the ragops-data volume (/data/results); the Job FAILS when the gate fails.
+# The gate thresholds come from the ConfigMap rahbar-gate, mounted at /config/gate.yaml.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: eval
+  namespace: rahbar
+spec:
+  backoffLimit: 0               # a failed gate is a verdict, not a flake: do not retry it
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels: { app: eval }
+    spec:
+      restartPolicy: Never
+      enableServiceLinks: false
+      serviceAccountName: rahbar-api
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: eval
+          image: rahbar-eval:dev
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef: { name: rahbar-config }
+          env:
+            - { name: LABEL, value: baseline }
+            - { name: API_URL, value: "http://api:8000" }
+            - { name: STAGE, value: A }
+            - { name: GATE_ONLY, value: "0" }
+            - { name: TRACE_DIR, value: /data/traces }
+            - { name: RESULTS_DIR, value: /data/results }
+            - { name: GATE_CONFIG, value: /config/gate.yaml }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          resources:                 # F5: replace with your own `kubectl top` measurements
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { cpu: 500m, memory: 256Mi }
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }
+            - { name: ragops, mountPath: /data }
+            - { name: gate, mountPath: /config, readOnly: true }
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: ragops
+          persistentVolumeClaim:
+            claimName: ragops-data
+        - name: gate
+          configMap:
+            name: rahbar-gate

@@ -13,5 +13,7 @@ router = APIRouter(prefix="/api")
 @router.post("/ask", response_model=AskResponse)
 def ask(body: AskRequest, request: Request) -> AskResponse:
     state = request.app.state
+    # The evaluation suite sends X-Cache-Bypass: 1 so its numbers do not depend on what is cached.
+    use_cache = request.headers.get("X-Cache-Bypass") != "1"
     return answer_question(body.question, state.retriever, state.provider, state.settings,
-                           getattr(state, "cache", None))
+                           getattr(state, "cache", None), use_cache=use_cache)

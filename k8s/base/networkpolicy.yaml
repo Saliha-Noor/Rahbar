@@ -59,7 +59,7 @@ spec:
       ports:
         - { protocol: TCP, port: 8000 }
 ---
-# api egress: chroma, redis, and the LLM host
+# api egress: chroma, redis, Ollama host, and external HTTPS for hosted LLM
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -80,9 +80,13 @@ spec:
       ports:
         - { protocol: TCP, port: 6379 }
     - to:
-        - ipBlock: { cidr: 192.168.65.254/32 }
+        - ipBlock: { cidr: 192.168.49.1/32 }
       ports:
         - { protocol: TCP, port: 11434 }
+    - to:
+        - ipBlock: { cidr: 0.0.0.0/0, except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16] }
+      ports:
+        - { protocol: TCP, port: 443 }
 ---
 # chroma: from api and indexer only
 apiVersion: networking.k8s.io/v1
@@ -134,6 +138,105 @@ spec:
       ports:
         - { protocol: TCP, port: 8000 }
     - to:
-        - ipBlock: { cidr: 192.168.65.254/32 }
+        - ipBlock: { cidr: 192.168.49.1/32 }
+      ports:
+        - { protocol: TCP, port: 11434 }
+---
+# RAGOps: the evaluation Job may call the API pods (live and candidate), nothing else may call it that way
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: api-ingress-from-eval
+spec:
+  podSelector:
+    matchExpressions:
+      - { key: app, operator: In, values: [api, api-candidate] }
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: { app: eval }
+      ports:
+        - { protocol: TCP, port: 8000 }
+---
+# RAGOps: the candidate API reads the same stores as the live API (it reads its own collection)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: api-candidate-egress
+spec:
+  podSelector:
+    matchLabels: { app: api-candidate }
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels: { app: chroma }
+      ports:
+        - { protocol: TCP, port: 8000 }
+    - to:
+        - podSelector:
+            matchLabels: { app: redis }
+      ports:
+        - { protocol: TCP, port: 6379 }
+    - to:
+        - ipBlock: { cidr: 192.168.49.1/32 }
+      ports:
+        - { protocol: TCP, port: 11434 }
+    - to:
+        - ipBlock: { cidr: 0.0.0.0/0, except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16] }
+      ports:
+        - { protocol: TCP, port: 443 }
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: chroma-ingress-candidate-and-eval
+spec:
+  podSelector:
+    matchLabels: { app: chroma }
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: { app: api-candidate }
+        - podSelector:
+            matchLabels: { app: eval }
+      ports:
+        - { protocol: TCP, port: 8000 }
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: redis-ingress-candidate
+spec:
+  podSelector:
+    matchLabels: { app: redis }
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: { app: api-candidate }
+      ports:
+        - { protocol: TCP, port: 6379 }
+---
+# RAGOps: evaluation Job egress: the APIs, Chroma (read-only helpers), and the host that runs Ollama
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: eval-egress
+spec:
+  podSelector:
+    matchLabels: { app: eval }
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - podSelector:
+            matchExpressions:
+              - { key: app, operator: In, values: [api, api-candidate, chroma] }
+      ports:
+        - { protocol: TCP, port: 8000 }
+    - to:
+        - ipBlock: { cidr: 192.168.49.1/32 }
       ports:
         - { protocol: TCP, port: 11434 }

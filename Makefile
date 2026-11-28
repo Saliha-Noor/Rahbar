@@ -13,7 +13,7 @@ INGRESS_IP ?= $(shell minikube ip 2>/dev/null)
 HOST ?= rahbar.local
 
 .DEFAULT_GOAL := help
-.PHONY: help install test lint dev cluster images apply secret index ask fetch eval eval-fixtures check
+.PHONY: ragops-check golden-check help install test lint dev cluster images apply secret index ask fetch eval eval-fixtures check
 
 help: ## list the targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-14s %s\n", $$1, $$2}'
@@ -44,9 +44,11 @@ images: ## build the three images and load them into minikube (needs yours: Dock
 	docker build -t rahbar-api:$(TAG) api
 	docker build -t rahbar-indexer:$(TAG) indexer
 	docker build -t rahbar-ui:$(TAG) ui
+	docker build -t rahbar-eval:$(TAG) eval
 	minikube image load rahbar-api:$(TAG)
 	minikube image load rahbar-indexer:$(TAG)
 	minikube image load rahbar-ui:$(TAG)
+	minikube image load rahbar-eval:$(TAG)
 
 apply: ## apply the dev overlay (needs yours: manifests)
 	kubectl apply -k k8s/overlays/dev
@@ -76,3 +78,10 @@ eval-fixtures: ## score the CI fixture golden set against a local `make dev`
 
 check: ## run the submission checker
 	$(PY) scripts/check_submission.py
+
+ragops-check: ## offline RAGOps checks: golden-set rules, coverage with the offline embedder
+	python eval/check_golden.py || true
+	python eval/coverage.py --backend hash --stage A --label offline --out-dir /tmp/rahbar-cov || true
+
+golden-check: ## does eval/golden.jsonl meet the assignment's Part B rules?
+	python eval/check_golden.py

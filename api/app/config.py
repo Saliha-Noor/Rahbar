@@ -50,6 +50,11 @@ class Settings:
 
     log_level: str = "INFO"
 
+    # RAGOps layer: traces, repeatable generation, offline embeddings for CI
+    trace_dir: str = ""              # TRACE_DIR: where the per-pod trace JSONL files go ("" = stdout only)
+    llm_seed: int | None = None      # LLM_SEED: fixed generation seed (evaluation runs)
+    embed_backend: str = "ollama"    # EMBED_BACKEND: ollama | hash (hash: offline tests only)
+
 
 def get_settings() -> Settings:
     return Settings(
@@ -71,4 +76,7 @@ def get_settings() -> Settings:
         redis_host=os.environ.get("REDIS_HOST", "redis"),
         redis_port=_int("REDIS_PORT", 6379),
         log_level=os.environ.get("LOG_LEVEL", "INFO"),
+        trace_dir=os.environ.get("TRACE_DIR", ""),
+        llm_seed=int(os.environ["LLM_SEED"]) if os.environ.get("LLM_SEED") else None,
+        embed_backend=os.environ.get("EMBED_BACKEND", "ollama"),
     )

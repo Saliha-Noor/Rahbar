@@ -22,4 +22,7 @@ data:
   REDIS_PORT: "6379"
   CORPUS_DIR: "/corpus"
   CACHE_TTL: "86400"
-
+  # --- RAGOps layer
+  TRACE_DIR: "/data/traces"        # one JSONL file per API pod on the ragops-data volume
+  LLM_SEED: "42"                   # fixed generation seed: repeatable evaluation runs
+  EMBED_VERSION: "1"               # free label written into the collection metadata and every trace
