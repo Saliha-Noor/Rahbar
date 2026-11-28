@@ -105,7 +105,7 @@ jobs:
         run: |
           GW=$(docker network inspect kind -f '{{range .IPAM.Config}}{{.Gateway}} {{end}}' | tr ' ' '\n' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
           kubectl kustomize k8s/overlays/ci \
-            | sed "s/192\.168\.49\.1/$GW/g; s/host\.minikube\.internal/$GW/g" > /tmp/ci.yaml
+            | sed "s/192\.168\.49\.1/$GW/g; s/192\.168\.65\.254/$GW/g; s/host\.minikube\.internal/$GW/g" > /tmp/ci.yaml
           for i in 1 2 3 4 5; do kubectl apply -f /tmp/ci.yaml && break; sleep 5; done
           kubectl rollout status statefulset/chroma -n rahbar --timeout=180s
           kubectl rollout status deploy/redis -n rahbar --timeout=120s
