@@ -9,3 +9,5 @@ COPY *.py *.sh *.jsonl *.yaml ./eval/
 WORKDIR /app/eval
 USER 10001
 CMD ["sh", "job_entry.sh"]
+
+
