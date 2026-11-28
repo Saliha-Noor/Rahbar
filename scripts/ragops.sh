@@ -1,15 +1,4 @@
 #!/usr/bin/env bash
-# RAGOps helper for the Kubernetes demo. Run from the repository root.
-#   scripts/ragops.sh load-batch-b            copy corpus/batch_b into the corpus PVC
-#   scripts/ragops.sh ingest [name]           run the ingestion Job (verify + incremental update)
-#   scripts/ragops.sh admin ARGS...           run `python -m pipeline.run ARGS` as a Job (--audit, --count F, --archive F, --restore F, --dry-run)
-#   scripts/ragops.sh ingest-collection NAME CHUNK_SIZE [OVERLAP]   build a candidate collection
-#   scripts/ragops.sh eval LABEL [SERVICE] [STAGE]   run the suite + gate Job against a Service
-#   scripts/ragops.sh release COLLECTION      rolling update of the live API to a collection
-#   scripts/ragops.sh undo                    kubectl rollout undo of the live API
-#   scripts/ragops.sh trace-after "question"  ask the live API and print the trace
-#   scripts/ragops.sh pull                    copy traces and results from the cluster into the repo
-#   scripts/ragops.sh measure                 kubectl top, for the F5 resource numbers
 set -euo pipefail
 NS="${NS:-rahbar}"
 cmd="${1:-help}"; shift || true

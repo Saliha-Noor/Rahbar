@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """The RAGOps evaluation suite: three levels in one command (assignment Part B).
 
     python eval/suite.py --api http://api:8000 --label baseline --traces /data/traces
@@ -29,13 +28,12 @@ from pathlib import Path
 import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import run_eval as RE  # noqa: E402  (reuses the section-matching rule and citation check)
+import run_eval as RE 
 
 HERE = Path(__file__).resolve().parent
 STAGES = {"A": 0, "B": 1, "E4": 2}
 
 
-# ----------------------------------------------------------------------------- helpers
 def load_golden(path: Path, stage: str) -> list[dict]:
     rows = [json.loads(x) for x in path.read_text(encoding="utf-8").splitlines() if x.strip()]
     return [r for r in rows if STAGES[r.get("since", "A")] <= STAGES[stage]]
@@ -76,7 +74,6 @@ def embed(ollama: str, model: str, texts: list[str]) -> list[list[float]]:
     return r.json()["embeddings"]
 
 
-# ----------------------------------------------------------------------------- ranking metrics
 def _rel_flags(relevant: list[dict], retrieved: list[dict], k: int) -> list[int]:
     return [int(any(RE._hit(r, t) for r in relevant)) for t in retrieved[:k]]
 
@@ -211,9 +208,12 @@ def human_agreement(rows: list[dict], labels_path: Path) -> dict:
         return {"status": "no human labels yet: run with --label-sheet 10, label by hand, save "
                           f"{labels_path.name}"}
     labels = {j["id"]: j["supported"] for j in map(json.loads, labels_path.read_text().splitlines()) if j}
+    
     pairs = [(labels[r["q"]["id"]], r["judge"]) for r in rows if r["q"]["id"] in labels and r.get("judge") is not None]
+    
     if not pairs:
         return {"status": "labels found but none match judged answers"}
+        
     return {"labelled": len(pairs), "agreement": round(sum(a == b for a, b in pairs) / len(pairs), 3)}
 
 
@@ -232,7 +232,6 @@ def label_sheet(rows: list[dict], n: int, traces: Path | None, out: Path) -> Non
     out.write_text("\n".join(lines), encoding="utf-8")
 
 
-# ----------------------------------------------------------------------------- main
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--api", default=os.environ.get("API_URL"), required="API_URL" not in os.environ)
@@ -267,6 +266,7 @@ def main() -> int:
     with httpx.Client(timeout=900, headers=headers) as client:
         ready = client.get(f"{args.api.rstrip('/')}/readyz").json()
         runs = []
+        
         for i in range(args.runs):
             print(f"  run {i + 1}/{args.runs} ...", flush=True)
             runs.append(run_once(args, golden, client, noise=False))
@@ -274,6 +274,7 @@ def main() -> int:
         noisy = run_once(args, golden, client, noise=True)
 
     base = runs[0]["metrics"]
+    
     if args.label_sheet:
         label_sheet(runs[0]["rows"], args.label_sheet, Path(args.traces) if args.traces else None,
                     out_dir / "label_sheet.md")

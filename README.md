@@ -1,4 +1,4 @@
-# RAHBAR — Grounded RAG on Kubernetes
+# RAHBAR (Grounded RAG on Kubernetes) 
 
 [![CI](https://github.com/Saliha-Noor/Rahbar/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/Saliha-Noor/Rahbar/actions/workflows/ci.yml)
 

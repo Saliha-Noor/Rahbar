@@ -10,6 +10,7 @@
     --accent: #1f5f8b; --ok-bg: #e5f2e8; --ok-ink: #1e6a33; --warn-bg: #fbefd9; --warn-ink: #8a5300;
     --err-bg: #fbe4e2; --err-ink: #9b2c22; --code: #f1f0ec;
   }
+  
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #161615; --panel: #1f1f1d; --ink: #ecebe6; --muted: #a3a29b; --line: #34332f;
@@ -33,9 +34,11 @@
           color: var(--muted); }
   .chip.ok { background: var(--ok-bg); color: var(--ok-ink); border-color: transparent; }
   .chip.warn { background: var(--warn-bg); color: var(--warn-ink); border-color: transparent; }
+  
   h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
        margin: 14px 0 6px; }
   ol.cites { margin: 0; padding-left: 20px; }
+  
   details { margin-top: 10px; }
   summary { cursor: pointer; color: var(--muted); font-size: 14px; }
   table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 8px; }
@@ -50,6 +53,7 @@
   .bar { max-width: 760px; margin: 0 auto; display: flex; gap: 8px; }
   textarea { flex: 1; resize: none; height: 52px; padding: 12px; font: inherit; color: var(--ink);
              background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+  
   textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
   button { padding: 0 20px; font: inherit; font-weight: 600; color: #fff; background: var(--accent);
            border: 0; border-radius: 10px; cursor: pointer; }
@@ -75,8 +79,7 @@
 </form>
 
 <script>
-// The API sits behind the same Ingress host at /api. For local development you can
-// point elsewhere with ?api=http://localhost:8000 (that server must allow CORS).
+
 const API_BASE = new URLSearchParams(location.search).get("api") || window.RAHBAR_API || "";
 
 const thread = document.getElementById("thread");
@@ -84,9 +87,6 @@ const form = document.getElementById("ask");
 const input = document.getElementById("question");
 const send = document.getElementById("send");
 
-// Model output and retrieved text are untrusted. Everything below is built with
-// textContent and createElement, never innerHTML, so a document or an answer
-// containing HTML or script is shown as text and never run.
 function el(tag, attrs = {}, text) {
   const node = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
