@@ -112,12 +112,15 @@ def read_meta(path: Path) -> tuple[dict[str, str], str, bool]:
                 title = m.group(1).strip() if m else ""
             explicit = bool(title)
         elif suf == ".html":
-            from bs4 import BeautifulSoup
+            from bs4 import BeautifulSoup, Tag
 
             soup = BeautifulSoup(path.read_text(encoding="utf-8", errors="ignore"), "html.parser")
             for tag in soup.find_all("meta"):
-                if tag.get("name") and tag.get("content"):  # type: ignore[union-attr]
-                    meta[str(tag["name"]).lower()] = str(tag["content"])
+                if isinstance(tag, Tag):
+                    name_attr = tag.get("name")
+                    content_attr = tag.get("content")
+                    if name_attr and content_attr:
+                        meta[str(name_attr).lower()] = str(content_attr)
             t = soup.find("title") or soup.find("h1")
             title = t.get_text(" ", strip=True) if t else ""
             explicit = bool(title)

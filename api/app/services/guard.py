@@ -46,7 +46,7 @@ def keep_valid_citations(answer: Answer, passages: list[Passage]) -> tuple[Answe
 
     # Fallback: small models that say answered_from_context=True but emit citations=[]
     # get the top-1 retrieved passage as an inferred citation.
-    if answer.answered_from_context and not good and passages:
+    if answer.answered_from_context and not answer.citations and passages:
         p = passages[0]
         good = [Citation(source=p.source, section=p.section, page=p.page)]
         dropped = 0  # nothing was dropped; we inferred
