@@ -149,10 +149,10 @@ def _function_body(src, name_pattern):
     if not m:
         return None
     indent = len(m.group(1).expandtabs())
-    # skip the remainder of the `def` line (parameters may wrap over several lines)
     nl = src.find("\n", m.end())
     depth = src[m.end():nl if nl != -1 else len(src)].count("(") - \
         src[m.end():nl if nl != -1 else len(src)].count(")")
+    
     while depth > 0 and nl != -1:
         nxt = src.find("\n", nl + 1)
         seg = src[nl:nxt if nxt != -1 else len(src)]
@@ -172,9 +172,6 @@ def _function_body(src, name_pattern):
     return "\n".join(body)
 
 
-# ==========================================================================
-# 0 - starter kit leftovers
-# ==========================================================================
 TEXT_SUFFIXES = {".py", ".md", ".yaml", ".yml", ".toml", ".txt", ".html", ".js", ".ts",
                  ".conf", ".json", ".cfg", ".ini", ".sh"}
 TEXT_NAMES = {"Makefile", "Dockerfile", ".gitignore", ".dockerignore"}
@@ -272,7 +269,7 @@ def check_git():
         r"|(^|/)[\w.-]*secret[\w.-]*\.ya?ml$|\.kubeconfig$|(^|/)kubeconfig$", re.I)
     hits = sorted({ln.strip() for ln in added.splitlines()
                    if ln.strip() and danger.search(ln.strip())})
-    # a committed secret TEMPLATE is fine; flag it as a warning, real names as failures
+   
     real = [h for h in hits if not re.search(r"(example|template|sample|placeholder)", h, re.I)]
     if real:
         fail(s, "SECRET-BEARING FILES IN HISTORY (-20, rotate the credential): "
@@ -321,17 +318,12 @@ def check_git():
     soft(bool(re.search(r"\bdev\b", git("branch", "-a") or "")), s,
          "a dev branch exists", "no dev branch - the two-branch model is required")
 
-
-# ==========================================================================
-# B - corpus
-# ==========================================================================
 def check_corpus():
     s = "B · corpus"
     cdir = ROOT / "corpus"
     manifest = read("corpus/MANIFEST.md") or read("corpus/MANIFEST.yaml") or ""
     docs = []
     if cdir.is_dir():
-        # corpus/raw/ is where fetch.py downloads to; it is gitignored, so it does not count
         docs = [p for p in cdir.rglob("*")
                 if p.is_file() and p.suffix.lower() in {".pdf", ".md", ".txt", ".html", ".docx"}
                 and "raw" not in p.relative_to(cdir).parts
@@ -368,9 +360,6 @@ def check_corpus():
                 f"CORPUS.md does not document {label} - a required corpus property")
 
 
-# ==========================================================================
-# C/D - indexing, retrieval, embedding pin
-# ==========================================================================
 def check_indexer():
     s = "C · indexer"
     src = slurp_src(["indexer/**/*.py"]) or slurp_src(["**/*.py"])
@@ -391,17 +380,14 @@ def check_indexer():
     ]:
         verdict(bool(re.search(pat, src, re.I)), s, good, bad)
 
-    # structure-aware chunking, not just fixed windows
     soft(bool(re.search(r"(section|heading|paragraph|structure[_-]?aware|split_on)", src, re.I)),
          s, "structure-aware chunking signals present",
          "chunking looks purely fixed-size - structure-aware splitting is required")
 
-    # metadata fields
     for field in ["source", "section", "page", "doc_version", "superseded"]:
         verdict(field in src, s, f"metadata field `{field}` written",
                 f"metadata field `{field}` not found - version filtering cannot work without it")
 
-    # the pin must be written into collection metadata
     soft(bool(re.search(r"(embed_model|embedding_model|EMBED_MODEL)", src, re.I)), s,
          "the indexer records the embedding model",
          "the indexer never references the embedding model name - the pin cannot be verified later")
@@ -419,7 +405,6 @@ def check_api_and_pin():
     soft(bool(re.search(r"/ask|/query|/chat", src)), s,
          "a question endpoint is present", "no /ask, /query or /chat endpoint found")
 
-    # liveness must not touch dependencies
     live = _function_body(src, r"\w*health\w*")
     if live is None:
         warn(s, "could not locate the liveness handler to inspect it - check by hand")
@@ -430,7 +415,6 @@ def check_api_and_pin():
                 "the liveness handler appears to touch a dependency - a slow Chroma then "
                 "becomes a cluster-wide restart storm")
 
-    # readiness must check a non-empty collection
     ready = _function_body(src, r"\w*read(y|iness)\w*")
     if ready is None:
         warn(s, "could not locate the readiness handler - check by hand")
@@ -439,7 +423,6 @@ def check_api_and_pin():
              "readiness appears to check the collection is non-empty",
              "readiness does not look like it checks for a NON-EMPTY collection - required")
 
-    # the embedding pin guardrail
     guard = re.search(r"(dimension|embed_model|embedding_model).{0,200}(mismatch|!=|does not match)",
                       src, re.I | re.S) or \
         re.search(r"(mismatch).{0,200}(embed|dimension)", src, re.I | re.S)
@@ -486,7 +469,6 @@ def check_generation():
             "request_id propagation present",
             "no request_id - structured logging and per-request tracing need one")
 
-    # retrieval observability
     soft(bool(re.search(r"(score|similarit|distance)", src, re.I)), s,
          "retrieval scores are handled/logged",
          "no retrieval score handling - you cannot diagnose stage C without the scores")
@@ -494,7 +476,6 @@ def check_generation():
     if re.search(r"\beval\s*\(", src):
         fail(s, "eval() found in the source - never evaluate model or document text")
 
-    # provider interface
     providers = set(re.findall(r"class\s+(\w*(?:Provider|LLM|Triage)\w*)\b", src))
     soft(len(providers) >= 3, s, f"{len(providers)} provider classes: {sorted(providers)[:4]}",
          f"only {len(providers)} provider class(es) - an interface plus a stub is needed for CI")
@@ -502,7 +483,6 @@ def check_generation():
             "a stub provider exists for offline tests",
             "no stub provider - CI must not call a real model")
 
-    # hardcoded keys anywhere
     everything = slurp(["**/*.py", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.yaml", "**/*.yml"])
     for pat, label in [(r"gsk_[A-Za-z0-9]{20,}", "a Groq key"),
                        (r"AIza[A-Za-z0-9_\-]{25,}", "a Google API key"),
@@ -528,9 +508,6 @@ def check_cache():
          "no never-cache rule found - abstentions and follow-ups must never be cached")
 
 
-# ==========================================================================
-# G - Kubernetes
-# ==========================================================================
 def check_k8s():
     s = "G · kubernetes"
     if not (ROOT / "k8s").is_dir():
@@ -551,7 +528,6 @@ def check_k8s():
             "the Chroma StatefulSet uses volumeClaimTemplates",
             "no volumeClaimTemplates - a vector store without a PVC loses the index (-8)")
 
-    # the indexer must be a Job, and the Job must not be a Deployment in disguise
     jobs = re.findall(r"(?s)kind:\s*Job(.{0,1200})", blob)
     if jobs:
         jb = jobs[0]
@@ -561,14 +537,12 @@ def check_k8s():
         soft("backoffLimit" in jb, s, "backoffLimit set on the Job",
              "no backoffLimit on the indexer Job")
 
-    # namespace discipline
     verdict(not re.search(r"namespace:\s*default", blob), s,
             "no manifest targets the default namespace",
             "manifests target the default namespace (-5)")
     soft(bool(re.search(r"namespace:\s*\w", blob)), s,
          "manifests carry an explicit namespace", "no explicit namespace on objects")
 
-    # services must be ClusterIP for data tiers
     for m in re.finditer(r"(?s)kind:\s*Service(.{0,900}?)(?=\n---|\Z)", blob):
         block = m.group(1)
         name = re.search(r"name:\s*([\w-]+)", block)
@@ -581,7 +555,6 @@ def check_k8s():
                 warn(s, f"Service `{nm}` is NodePort/LoadBalancer - acceptable only if it is "
                         f"not a data tier")
 
-    # probes
     for probe in ["startupProbe", "livenessProbe", "readinessProbe"]:
         verdict(probe in blob, s, f"{probe} configured", f"no {probe} configured")
     live_ok = re.search(r"livenessProbe:(?:.|\n){0,250}?/healthz", blob)
@@ -591,14 +564,12 @@ def check_k8s():
             "liveness/readiness are not wired to /healthz and /readyz - swapping them turns a "
             "slow dependency into a restart storm")
 
-    # resources
     verdict(bool(re.search(r"requests:\s*\n\s*(cpu|memory)", blob)), s,
             "resource requests set",
             "no resources.requests - the HPA has no denominator and reads <unknown>/70% (-6)")
     verdict(bool(re.search(r"limits:\s*\n\s*(cpu|memory)", blob)), s,
             "resource limits set", "no resources.limits")
 
-    # HPA
     if "HorizontalPodAutoscaler" in kinds:
         soft("autoscaling/v2" in blob, s, "HPA uses autoscaling/v2",
              "HPA is not autoscaling/v2")
@@ -608,12 +579,10 @@ def check_k8s():
         else:
             warn(s, "HPA minReplicas looks below 3 - the handout asks for 3->8")
 
-    # replicas on the api
     reps = [int(x) for x in re.findall(r"^\s*replicas:\s*(\d+)", blob, re.M)]
     soft(any(r >= 3 for r in reps), s, f"replica counts found: {reps}",
          f"no Deployment asks for 3+ replicas (found {reps}) - the api must run 3")
 
-    # rollout + graceful shutdown
     soft("maxUnavailable: 0" in blob.replace("maxUnavailable:0", "maxUnavailable: 0"), s,
          "rolling update configured for zero unavailability",
          "no maxUnavailable: 0 - a zero-downtime rollout is not guaranteed")
@@ -621,7 +590,6 @@ def check_k8s():
          "graceful shutdown configured",
          "no preStop / terminationGracePeriodSeconds - rollouts will drop live requests")
 
-    # security context
     verdict(bool(re.search(r"runAsNonRoot:\s*true", blob)), s,
             "runAsNonRoot: true set", "no runAsNonRoot: true - containers run as root")
     soft(bool(re.search(r"readOnlyRootFilesystem:\s*true", blob)), s,
@@ -632,7 +600,6 @@ def check_k8s():
          "service-account token not auto-mounted where unneeded",
          "no automountServiceAccountToken: false anywhere")
 
-    # NetworkPolicy must be deny-by-default somewhere
     if "NetworkPolicy" in kinds:
         npblob = "".join(re.findall(r"(?s)kind:\s*NetworkPolicy(.{0,900})", blob))
         deny = re.search(r"podSelector:\s*\{\s*\}", npblob) or \
@@ -640,7 +607,6 @@ def check_k8s():
         soft(bool(deny), s, "a deny-by-default NetworkPolicy is present",
              "no NetworkPolicy with an empty podSelector - deny-by-default is the requirement")
 
-    # committed secrets with real values
     for m in re.finditer(r"(?s)kind:\s*Secret.*?\bdata:\s*\n((?:[ \t]+\S+:\s*\S+\n)+)", blob):
         for line in m.group(1).splitlines():
             v = line.split(":", 1)[-1].strip().strip('"').strip("'")
@@ -663,7 +629,6 @@ def check_indexing_not_in_startup():
     api = slurp_src(["api/**/*.py"])
     if not api.strip():
         return
-    # look for pipeline verbs inside startup hooks
     hooks = re.findall(
         r"(?s)(@app\.on_event\(\s*[\"']startup[\"']\s*\)|lifespan|def\s+startup\w*)(.{0,1500})",
         api)
@@ -681,9 +646,6 @@ def check_indexing_not_in_startup():
          "no collection write (.add / .upsert) found in indexer/ - who builds the index?")
 
 
-# ==========================================================================
-# H - evaluation
-# ==========================================================================
 def check_eval():
     s = "H · evaluation"
     g = read("eval/golden.yaml") or read("eval/golden.yml") or read("eval/golden.json") or ""
@@ -773,9 +735,6 @@ def _flatten_keys(o, out=None):
     return out
 
 
-# ==========================================================================
-# I - images and pipeline
-# ==========================================================================
 def check_dockerfiles():
     for label, path, multi_required in [
         ("I · api image", "api/Dockerfile", False),
@@ -859,7 +818,6 @@ def check_workflows():
             "jobs are gated with `needs:`",
             "no `needs:` anywhere (-6) - you are publishing artifacts from untested code")
 
-    # the publishing job specifically must be gated
     gated = True
     for wfile in sorted(list((ROOT / ".github" / "workflows").glob("*.yml")) +
                         list((ROOT / ".github" / "workflows").glob("*.yaml"))):
@@ -935,7 +893,6 @@ def check_docs():
          "no `kubectl top` reference - resource numbers must be justified with real output")
 
 
-# ==========================================================================
 def main():
     print(f"\n{BOLD}RAHBAR submission checker{OFF}  ·  {ROOT}\n")
     for fn in (check_starter_leftovers, check_structure, check_git, check_corpus, check_indexer,
